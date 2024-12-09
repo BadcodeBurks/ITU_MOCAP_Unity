@@ -30,7 +30,7 @@ namespace Burk
 
         public Vector3 Read()
         {
-            return _bufferReader.ReadVector3(_bufferIndex) * 360f;
+            return _bufferReader.ReadVector3(_bufferIndex);
         }
     }
 }

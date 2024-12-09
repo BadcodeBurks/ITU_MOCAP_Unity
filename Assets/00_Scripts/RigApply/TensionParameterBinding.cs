@@ -50,6 +50,10 @@ namespace Burk
             return new TensionParameterControlBinding(readerKey, this);
         }
 
-        public void Update(float value) => _animator.SetFloat(_parameterHash, value);
+        public void Update(float value)
+        {
+            value = (value - valueRange.x) / (valueRange.y - valueRange.x) * (mapRange.y - mapRange.x) + mapRange.x;
+            _animator.SetFloat(_parameterHash, value);
+        }
     }
 }

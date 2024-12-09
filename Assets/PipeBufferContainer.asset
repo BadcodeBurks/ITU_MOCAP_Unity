@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d5ada1e25a42774ca984205b2d4ce46, type: 3}
   m_Name: PipeBufferContainer
   m_EditorClassIdentifier: 
-  pipeName: MockPipe
+  pipeName: glove

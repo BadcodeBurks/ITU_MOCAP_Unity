@@ -1256,36 +1256,48 @@ MonoBehaviour:
       data:
         _key: Ring
         _controlType: 1
+        valueRange: {x: 941, y: 947}
+        mapRange: {x: 0, y: 1}
         parameterName: Ring
     - rid: 328146574299365407
       type: {class: ParameterControl, ns: Burk, asm: Assembly-CSharp}
       data:
         _key: Pinky
         _controlType: 1
+        valueRange: {x: 938, y: 945}
+        mapRange: {x: 0, y: 1}
         parameterName: Pinky
     - rid: 328146574299365412
       type: {class: ParameterControl, ns: Burk, asm: Assembly-CSharp}
       data:
         _key: Thumb
         _controlType: 1
+        valueRange: {x: 925, y: 933}
+        mapRange: {x: 0, y: 1}
         parameterName: Thumb
     - rid: 328146574299365413
       type: {class: ParameterControl, ns: Burk, asm: Assembly-CSharp}
       data:
         _key: Index
         _controlType: 1
+        valueRange: {x: 950, y: 958}
+        mapRange: {x: 0, y: 1}
         parameterName: Index
     - rid: 328146574299365414
       type: {class: ParameterControl, ns: Burk, asm: Assembly-CSharp}
       data:
         _key: Middle
         _controlType: 1
+        valueRange: {x: 955, y: 962}
+        mapRange: {x: 0, y: 1}
         parameterName: Middle
     - rid: 328146574299365417
       type: {class: TransformControl, ns: Burk, asm: Assembly-CSharp}
       data:
         _key: HandBase
         _controlType: 0
+        valueRange: {x: 0, y: 360}
+        mapRange: {x: 0, y: 360}
         transform: {fileID: 1052127399}
         imuTransform: {fileID: 282220431}
 --- !u!1 &1638869036

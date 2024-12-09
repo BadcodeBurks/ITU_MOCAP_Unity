@@ -57,6 +57,10 @@ namespace Burk
 
         public void Update(Vector3 val)
         {
+            //not correct mapping
+            val.z = (val.x - valueRange.x) / (valueRange.y - valueRange.x) * (mapRange.y - mapRange.x) + mapRange.x;
+            val.x = (val.y - valueRange.x) / (valueRange.y - valueRange.x) * (mapRange.y - mapRange.x) + mapRange.x;
+            val.y = (val.z - valueRange.x) / (valueRange.y - valueRange.x) * (mapRange.y - mapRange.x) + mapRange.x;
             transform.rotation = Quaternion.Euler(val) * rotation;
         }
     }

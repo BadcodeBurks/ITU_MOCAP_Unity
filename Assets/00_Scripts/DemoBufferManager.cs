@@ -20,7 +20,7 @@ namespace Burk
             if (usePipeBuffer)
             {
                 Debug.Log("Initializing pipe buffer");
-                PipeHandler.CreateMockServer();
+                //PipeHandler.CreateMockServer();
                 StartCoroutine(PipeHandler.GenerateRandomFloats());
                 pipeBufferContainer.OnBufferInitialized += () =>
                 {
