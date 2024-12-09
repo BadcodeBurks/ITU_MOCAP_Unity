@@ -1,0 +1,14 @@
+using UnityEngine;
+
+    #ROOTNAMESPACEBEGIN#
+/// <summary>
+/// #NAME#
+/// </summary>
+public class #SCRIPTNAME# : MonoBehaviour
+{
+    void Start()
+    {
+        #NOTRIM#
+    }
+}
+#ROOTNAMESPACEEND#
