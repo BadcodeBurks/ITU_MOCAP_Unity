@@ -226,7 +226,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 166400190}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
@@ -282,8 +282,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 186713106}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.12669262, y: 0.8119051, z: -0.19166479, w: 0.53667855}
-  m_LocalPosition: {x: -1.840058, y: 2, z: 0.7837007}
+  m_LocalRotation: {x: 0.245629, y: 0.025753072, z: -0.006528073, w: 0.9689998}
+  m_LocalPosition: {x: -0.1, y: 2.02, z: -1.88}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -505,8 +505,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.12669262, y: 0.8119051, z: -0.19166479, w: 0.53667855}
-  m_LocalPosition: {x: -1.840058, y: 2, z: 0.7837007}
+  m_LocalRotation: {x: 0.245629, y: 0.025753072, z: -0.006528073, w: 0.9689998}
+  m_LocalPosition: {x: -0.1, y: 2.02, z: -1.88}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -787,7 +787,7 @@ GameObject:
   - component: {fileID: 755290866}
   - component: {fileID: 755290869}
   - component: {fileID: 755290868}
-  - component: {fileID: 755290867}
+  - component: {fileID: 755290870}
   m_Layer: 0
   m_Name: cm
   m_TagString: Untagged
@@ -810,60 +810,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 186713107}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &755290867
-MonoBehaviour:
-  m_ObjectHideFlags: 3
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 755290865}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9384ab8608cdc3d479fe89cd51eed48f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_BindingMode: 5
-  m_FollowOffset: {x: 0, y: 1, z: -2}
-  m_XDamping: 1
-  m_YDamping: 1
-  m_ZDamping: 1
-  m_AngularDampingMode: 0
-  m_PitchDamping: 0
-  m_YawDamping: 0
-  m_RollDamping: 0
-  m_AngularDamping: 0
-  m_Heading:
-    m_Definition: 2
-    m_VelocityFilterStrength: 4
-    m_Bias: 0
-  m_RecenterToTargetHeading:
-    m_enabled: 1
-    m_WaitTime: 1
-    m_RecenteringTime: 2
-    m_LegacyHeadingDefinition: -1
-    m_LegacyVelocityFilterStrength: -1
-  m_XAxis:
-    Value: 0
-    m_SpeedMode: 0
-    m_MaxSpeed: 0
-    m_AccelTime: 0.1
-    m_DecelTime: 0.1
-    m_InputAxisName: Mouse X
-    m_InputAxisValue: 0
-    m_InvertInput: 1
-    m_MinValue: -180
-    m_MaxValue: 180
-    m_Wrap: 1
-    m_Recentering:
-      m_enabled: 0
-      m_WaitTime: 1
-      m_RecenteringTime: 2
-      m_LegacyHeadingDefinition: -1
-      m_LegacyVelocityFilterStrength: -1
-  m_LegacyRadius: 3.4028235e+38
-  m_LegacyHeightOffset: 3.4028235e+38
-  m_LegacyHeadingBias: 3.4028235e+38
-  m_HeadingIsSlave: 0
 --- !u!114 &755290868
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -903,6 +849,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac0b09e7857660247b1477e93731de29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &755290870
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 755290865}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd6043bde05a7fc4cba197d06915c1e3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Damping: {x: 0, y: 0, z: 0}
+  ShoulderOffset: {x: -0.1, y: 0.62, z: 0.12}
+  VerticalArmLength: 0.4
+  CameraSide: 1
+  CameraDistance: 2
+  CameraCollisionFilter:
+    serializedVersion: 2
+    m_Bits: 0
+  IgnoreTag: 
+  CameraRadius: 0.2
+  DampingIntoCollision: 0
+  DampingFromCollision: 2
 --- !u!1 &913501415
 GameObject:
   m_ObjectHideFlags: 0
@@ -1259,6 +1229,7 @@ MonoBehaviour:
         valueRange: {x: 941, y: 947}
         mapRange: {x: 0, y: 1}
         parameterName: Ring
+        autoMap: 1
     - rid: 328146574299365407
       type: {class: ParameterControl, ns: Burk, asm: Assembly-CSharp}
       data:
@@ -1267,6 +1238,7 @@ MonoBehaviour:
         valueRange: {x: 938, y: 945}
         mapRange: {x: 0, y: 1}
         parameterName: Pinky
+        autoMap: 1
     - rid: 328146574299365412
       type: {class: ParameterControl, ns: Burk, asm: Assembly-CSharp}
       data:
@@ -1275,6 +1247,7 @@ MonoBehaviour:
         valueRange: {x: 925, y: 933}
         mapRange: {x: 0, y: 1}
         parameterName: Thumb
+        autoMap: 1
     - rid: 328146574299365413
       type: {class: ParameterControl, ns: Burk, asm: Assembly-CSharp}
       data:
@@ -1283,6 +1256,7 @@ MonoBehaviour:
         valueRange: {x: 950, y: 958}
         mapRange: {x: 0, y: 1}
         parameterName: Index
+        autoMap: 1
     - rid: 328146574299365414
       type: {class: ParameterControl, ns: Burk, asm: Assembly-CSharp}
       data:
@@ -1291,6 +1265,7 @@ MonoBehaviour:
         valueRange: {x: 955, y: 962}
         mapRange: {x: 0, y: 1}
         parameterName: Middle
+        autoMap: 1
     - rid: 328146574299365417
       type: {class: TransformControl, ns: Burk, asm: Assembly-CSharp}
       data:
@@ -1552,7 +1527,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1935221025
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1568,10 +1543,10 @@ RectTransform:
   - {fileID: 1725728519}
   m_Father: {fileID: 166400191}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 50}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 200, y: -25}
+  m_SizeDelta: {x: 400, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1935221026
 MonoBehaviour:

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Burk
@@ -34,7 +35,10 @@ namespace Burk
             _controlType = ControlType.AnimationParam;
         }
         [SerializeField] private string parameterName;
+        [SerializeField] private bool autoMap;
         private int _parameterHash;
+        private Vector2Int valueRangeCounts = new Vector2Int(0, 0);
+
         private Animator _animator;
 
         public override ControlType ControlType => ControlType.AnimationParam;
@@ -42,6 +46,11 @@ namespace Burk
         public void SetAnimator(ref Animator animator)
         {
             if (!animator.TryGetNameHash(parameterName, out _parameterHash)) return;
+            if (autoMap)
+            {
+                valueRange.x = -1f;
+                valueRange.y = -1f;
+            }
             _animator = animator;
         }
 
@@ -52,8 +61,15 @@ namespace Burk
 
         public void Update(float value)
         {
+            if (autoMap) ConfigureMapping(value);
             value = (value - valueRange.x) / (valueRange.y - valueRange.x) * (mapRange.y - mapRange.x) + mapRange.x;
             _animator.SetFloat(_parameterHash, value);
+        }
+
+        private void ConfigureMapping(float value)
+        {
+            if (value < valueRange.x || valueRange.x < 1) valueRange.x = value;
+            if (value > valueRange.y || valueRange.y > 1024) valueRange.y = value;
         }
     }
 }
