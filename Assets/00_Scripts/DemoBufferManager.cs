@@ -17,16 +17,14 @@ namespace Burk
 
         private void Start()
         {
+
             if (usePipeBuffer)
             {
                 Debug.Log("Initializing pipe buffer");
-                //PipeHandler.CreateMockServer();
-                StartCoroutine(PipeHandler.GenerateRandomFloats());
                 pipeBufferContainer.OnBufferInitialized += () =>
                 {
                     StartCoroutine(pipeBufferContainer.ReadFromPipe());
                     controlSet.Init(pipeBufferContainer);
-                    // rigController.Bind(pipeBufferContainer);
                 };
                 pipeBufferContainer.Init();
             }
@@ -37,7 +35,6 @@ namespace Burk
                 {
                     sensorUIController.Init(simulatedBufferContainer);
                     controlSet.Init(simulatedBufferContainer);
-                    // rigController.Bind(simulatedBufferContainer);
                 };
                 simulatedBufferContainer.Init();
             }

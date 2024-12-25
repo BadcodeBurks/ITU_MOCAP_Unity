@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO.Pipes;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -13,13 +14,17 @@ namespace Burk
     {
         [SerializeField] private string pipeName;
         NamedPipeClientStream pipeClient;
+        CancellationTokenSource cancellationTokenSource;
+        CancellationToken token;
         public override void Init()
         {
             _reader = new BufferReader(this);
             List<string> keys = new List<string> { "T", "I", "M", "R", "P", "B" };
             CreateBuffer(5, 1);
             CreateReaders(keys, 5, 1);
-            Task.Run(CreateClient).GetAwaiter().OnCompleted(CompleteInit);
+            cancellationTokenSource = new CancellationTokenSource();
+            token = cancellationTokenSource.Token;
+            Task.Run(CreateClient, token).GetAwaiter().OnCompleted(CompleteInit);
         }
 
         private void CompleteInit()
@@ -31,9 +36,12 @@ namespace Burk
         private async void CreateClient()
         {
             pipeClient = new NamedPipeClientStream("localhost", pipeName, PipeDirection.In, PipeOptions.Asynchronous);
-            Debug.Log("Creating client");
-            await pipeClient.ConnectAsync(5000);
-            Debug.Log("Client created");
+            await pipeClient.ConnectAsync(token);
+        }
+
+        private void OnApplicationQuit()
+        {
+            cancellationTokenSource.Cancel();
         }
 
 

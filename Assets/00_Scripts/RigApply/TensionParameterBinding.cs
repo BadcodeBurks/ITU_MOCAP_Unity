@@ -37,7 +37,7 @@ namespace Burk
         [SerializeField] private string parameterName;
         [SerializeField] private bool autoMap;
         private int _parameterHash;
-        private Vector2Int valueRangeCounts = new Vector2Int(0, 0);
+        private float[] values;
 
         private Animator _animator;
 
@@ -48,8 +48,8 @@ namespace Burk
             if (!animator.TryGetNameHash(parameterName, out _parameterHash)) return;
             if (autoMap)
             {
-                valueRange.x = -1f;
-                valueRange.y = -1f;
+                valueRange.x = 0f;
+                valueRange.y = 1f;
             }
             _animator = animator;
         }
@@ -63,13 +63,24 @@ namespace Burk
         {
             if (autoMap) ConfigureMapping(value);
             value = (value - valueRange.x) / (valueRange.y - valueRange.x) * (mapRange.y - mapRange.x) + mapRange.x;
-            _animator.SetFloat(_parameterHash, value);
+            _animator.SetFloat(_parameterHash, GetTemporalAverage(value));
         }
 
         private void ConfigureMapping(float value)
         {
-            if (value < valueRange.x || valueRange.x < 1) valueRange.x = value;
+            if (value < 0.02f || value > 1024) return;
+            if (value < valueRange.x || valueRange.x <= 0.02f) valueRange.x = value;
             if (value > valueRange.y || valueRange.y > 1024) valueRange.y = value;
+        }
+
+        private float GetTemporalAverage(float value)
+        {
+            if (values == null) values = new float[20];
+            Array.Copy(values, 1, values, 0, values.Length - 1);
+            values[values.Length - 1] = value;
+            float sum = 0f;
+            foreach (float val in values) sum += val;
+            return sum / values.Length;
         }
     }
 }
