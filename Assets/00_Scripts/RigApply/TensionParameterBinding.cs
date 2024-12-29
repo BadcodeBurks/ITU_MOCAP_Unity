@@ -36,8 +36,10 @@ namespace Burk
         }
         [SerializeField] private string parameterName;
         [SerializeField] private bool autoMap;
+        [SerializeField] private float inputDeadzone = 1.2f;
         private int _parameterHash;
-        private float[] values;
+        private float[] _values;
+        private float _latestInput;
 
         private Animator _animator;
 
@@ -51,6 +53,7 @@ namespace Burk
                 valueRange.x = 0f;
                 valueRange.y = 1f;
             }
+            _latestInput = 0f;
             _animator = animator;
         }
 
@@ -62,8 +65,20 @@ namespace Burk
         public void Update(float value)
         {
             if (autoMap) ConfigureMapping(value);
-            value = (value - valueRange.x) / (valueRange.y - valueRange.x) * (mapRange.y - mapRange.x) + mapRange.x;
-            _animator.SetFloat(_parameterHash, GetTemporalAverage(value));
+            value = ApplyDeadzone(value);
+            value = ApplyMapping(value);
+            float averagedValue = GetTemporalAverage(value);
+            _animator.SetFloat(_parameterHash, averagedValue);
+        }
+
+        private float ApplyDeadzone(float inputValue)
+        {
+            if (Mathf.Abs(_latestInput - inputValue) > inputDeadzone)
+            {
+                _latestInput = inputValue;
+            }
+
+            return _latestInput;
         }
 
         private void ConfigureMapping(float value)
@@ -73,14 +88,16 @@ namespace Burk
             if (value > valueRange.y || valueRange.y > 1024) valueRange.y = value;
         }
 
+        private float ApplyMapping(float value) => (value - valueRange.x) / (valueRange.y - valueRange.x) * (mapRange.y - mapRange.x) + mapRange.x;
+
         private float GetTemporalAverage(float value)
         {
-            if (values == null) values = new float[20];
-            Array.Copy(values, 1, values, 0, values.Length - 1);
-            values[values.Length - 1] = value;
+            if (_values == null) _values = new float[20];
+            Array.Copy(_values, 1, _values, 0, _values.Length - 1);
+            _values[_values.Length - 1] = value;
             float sum = 0f;
-            foreach (float val in values) sum += val;
-            return sum / values.Length;
+            foreach (float val in _values) sum += val;
+            return sum / _values.Length;
         }
     }
 }

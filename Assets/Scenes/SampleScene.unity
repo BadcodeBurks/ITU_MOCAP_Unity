@@ -1230,6 +1230,7 @@ MonoBehaviour:
         mapRange: {x: 0, y: 1}
         parameterName: Ring
         autoMap: 1
+        inputDeadzone: 1.2
     - rid: 328146574299365407
       type: {class: ParameterControl, ns: Burk, asm: Assembly-CSharp}
       data:
@@ -1239,6 +1240,7 @@ MonoBehaviour:
         mapRange: {x: 0, y: 1}
         parameterName: Pinky
         autoMap: 1
+        inputDeadzone: 1.2
     - rid: 328146574299365412
       type: {class: ParameterControl, ns: Burk, asm: Assembly-CSharp}
       data:
@@ -1248,6 +1250,7 @@ MonoBehaviour:
         mapRange: {x: 0, y: 1}
         parameterName: Thumb
         autoMap: 1
+        inputDeadzone: 1.2
     - rid: 328146574299365413
       type: {class: ParameterControl, ns: Burk, asm: Assembly-CSharp}
       data:
@@ -1257,6 +1260,7 @@ MonoBehaviour:
         mapRange: {x: 0, y: 1}
         parameterName: Index
         autoMap: 1
+        inputDeadzone: 1.2
     - rid: 328146574299365414
       type: {class: ParameterControl, ns: Burk, asm: Assembly-CSharp}
       data:
@@ -1266,12 +1270,13 @@ MonoBehaviour:
         mapRange: {x: 0, y: 1}
         parameterName: Middle
         autoMap: 1
+        inputDeadzone: 1.2
     - rid: 328146574299365417
       type: {class: TransformControl, ns: Burk, asm: Assembly-CSharp}
       data:
         _key: HandBase
         _controlType: 0
-        valueRange: {x: 0, y: 1}
+        valueRange: {x: 0, y: 360}
         mapRange: {x: 0, y: 360}
         transform: {fileID: 1052127399}
         imuTransform: {fileID: 282220431}
