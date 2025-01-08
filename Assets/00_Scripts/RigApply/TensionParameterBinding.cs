@@ -37,6 +37,7 @@ namespace Burk
         [SerializeField] private string parameterName;
         [SerializeField] private bool autoMap;
         [SerializeField] private float inputDeadzone = 1.2f;
+        [SerializeField] private AnimationCurve _lutCurve = AnimationCurve.Linear(0, 0, 1, 1);
         private int _parameterHash;
         private float[] _values;
         private float _latestInput;
@@ -67,8 +68,9 @@ namespace Burk
             if (autoMap) ConfigureMapping(value);
             value = ApplyDeadzone(value);
             value = ApplyMapping(value);
-            float averagedValue = GetTemporalAverage(value);
-            _animator.SetFloat(_parameterHash, averagedValue);
+            value = GetTemporalAverage(value);
+            value = _lutCurve.Evaluate(value);
+            _animator.SetFloat(_parameterHash, value);
         }
 
         private float ApplyDeadzone(float inputValue)
