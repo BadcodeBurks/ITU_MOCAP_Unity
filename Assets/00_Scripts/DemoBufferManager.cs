@@ -14,6 +14,7 @@ namespace Burk
         [SerializeField] PipeBufferContainer pipeBufferContainer;
 
         [SerializeField] bool usePipeBuffer = false;
+        [Header("Pipe Buffer Settings")][SerializeField] float calibrationDuration = 5f;
 
         private void Start()
         {
@@ -21,12 +22,9 @@ namespace Burk
             if (usePipeBuffer)
             {
                 Debug.Log("Initializing pipe buffer");
-                pipeBufferContainer.OnBufferInitialized += () =>
-                {
-                    StartCoroutine(pipeBufferContainer.ReadFromPipe());
-                    controlSet.Init(pipeBufferContainer);
-                };
+                pipeBufferContainer.SetMono(this);
                 pipeBufferContainer.Init();
+                StartPipeBuffer();
             }
             else
             {
@@ -38,6 +36,29 @@ namespace Burk
                 };
                 simulatedBufferContainer.Init();
             }
+        }
+
+        private void StartPipeBuffer()
+        {
+            pipeBufferContainer.OnBufferInitialized += () =>
+            {
+                controlSet.Init(pipeBufferContainer);
+                controlSet.CalibrateControls(calibrationDuration);
+            };
+            pipeBufferContainer.CreateClient();
+        }
+
+        private void StopPipeBuffer()
+        {
+            pipeBufferContainer.StopClient();
+        }
+
+        public void ReconnectPipeBuffer()
+        {
+            StopPipeBuffer();
+            controlSet.UnbindControls();
+            StartPipeBuffer();
+            controlSet.BindControls(pipeBufferContainer);
         }
     }
 }

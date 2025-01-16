@@ -18,6 +18,8 @@ namespace Burk
             _isBound = true;
         }
 
+        public override void Unbind() => _isBound = false;
+
         public override SensorType GetSensorType() => SensorType.IMU;
 
         public override void Update()
@@ -64,6 +66,10 @@ namespace Burk
             val.x = (temp.y - valueRange.x) / (valueRange.y - valueRange.x) * (mapRange.y - mapRange.x) + mapRange.x;
             val.y = (temp.z - valueRange.x) / (valueRange.y - valueRange.x) * (mapRange.y - mapRange.x) + mapRange.x;
             transform.rotation = Quaternion.Euler(val) * rotation;
+        }
+
+        public override void ResetCalibration()
+        {
         }
     }
 }

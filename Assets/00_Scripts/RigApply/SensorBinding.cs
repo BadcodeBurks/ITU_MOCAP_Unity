@@ -21,6 +21,7 @@ namespace Burk
         protected bool _isBound;
         public abstract SensorType GetSensorType();
         public abstract void Bind(BufferContainer buffer);
+        public abstract void Unbind();
         public abstract void Update();
     }
 }

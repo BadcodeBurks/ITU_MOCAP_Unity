@@ -16,24 +16,38 @@ namespace Burk
         NamedPipeClientStream pipeClient;
         CancellationTokenSource cancellationTokenSource;
         CancellationToken token;
+        Coroutine readRoutine;
+        MonoBehaviour _routineMono;
+
+        public void SetMono(MonoBehaviour mono)
+        {
+            _routineMono = mono;
+        }
+
         public override void Init()
         {
             _reader = new BufferReader(this);
             List<string> keys = new List<string> { "T", "I", "M", "R", "P", "B" };
             CreateBuffer(5, 1);
             CreateReaders(keys, 5, 1);
+        }
+
+        public void CreateClient()
+        {
             cancellationTokenSource = new CancellationTokenSource();
             token = cancellationTokenSource.Token;
-            Task.Run(CreateClient, token).GetAwaiter().OnCompleted(CompleteInit);
+            Task.Run(CreateClientAsync, token).GetAwaiter().OnCompleted(CompleteInit);
         }
 
         private void CompleteInit()
         {
             _isInitialized = true;
+            cancellationTokenSource = null;
+            _routineMono.StartCoroutine(ReadFromPipe());
             OnBufferInitialized?.Invoke();
         }
 
-        private async void CreateClient()
+        private async void CreateClientAsync()
         {
             pipeClient = new NamedPipeClientStream("localhost", pipeName, PipeDirection.In, PipeOptions.Asynchronous);
             await pipeClient.ConnectAsync(token);
@@ -41,7 +55,18 @@ namespace Burk
 
         private void OnApplicationQuit()
         {
-            cancellationTokenSource.Cancel();
+            StopClient();
+        }
+
+        public void StopClient()
+        {
+            if (!_isInitialized)
+            {
+                if (cancellationTokenSource != null) cancellationTokenSource.Cancel();
+                return;
+            }
+            _routineMono.StopCoroutine(readRoutine);
+            if (pipeClient.IsConnected) pipeClient.Close();
         }
 
 

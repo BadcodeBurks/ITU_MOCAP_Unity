@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -26,6 +27,8 @@ namespace Burk
         [SerializeField] private Animator animator;
 
         private bool _isBound = false;
+        private bool _isCalibrating;
+
 
         public void Init(BufferContainer buffer)
         {
@@ -44,14 +47,24 @@ namespace Burk
             }
         }
 
-        private void BindControls(BufferContainer buffer)
+        public void BindControls(BufferContainer buffer)
         {
             for (int i = 0; i < _bindings.Count; i++)
             {
+                _controlList[i].value.ResetCalibration();
                 _bindings[i].Bind(buffer);
             }
 
             _isBound = true;
+        }
+
+        public void UnbindControls()
+        {
+            for (int i = 0; i < _bindings.Count; i++)
+            {
+                _bindings[i].Unbind();
+            }
+            _isBound = false;
         }
 
         private SensorBinding CreateBinding(Control control, string readerKey)
@@ -66,7 +79,6 @@ namespace Burk
                 TransformControl controlT = control as TransformControl;
                 controlT.Init();
             }
-
             return control.CreateBinding(readerKey);
         }
 
@@ -77,6 +89,27 @@ namespace Burk
             {
                 _bindings[i].Update();
             }
+        }
+
+        public void CalibrateControls(float calibrationDuration)
+        {
+            if (_isCalibrating) return;
+            StartCoroutine(Calibrate(calibrationDuration));
+        }
+
+        private IEnumerator Calibrate(float calibrationDuration)
+        {
+            _isCalibrating = true;
+            for (int i = 0; i < _bindings.Count; i++)
+            {
+                _controlList[i].value.StartCalibration();
+            }
+            yield return new WaitForSeconds(calibrationDuration);
+            for (int i = 0; i < _bindings.Count; i++)
+            {
+                _controlList[i].value.EndCalibration();
+            }
+            _isCalibrating = false;
         }
     }
 }

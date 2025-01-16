@@ -19,6 +19,8 @@ namespace Burk
             _isBound = true;
         }
 
+        public override void Unbind() => _isBound = false;
+
         public override void Update()
         {
             if (!_isBound) return;
@@ -65,7 +67,7 @@ namespace Burk
 
         public void Update(float value)
         {
-            if (autoMap) ConfigureMapping(value);
+            if (autoMap && _isCalibrating) ConfigureMapping(value);
             value = ApplyDeadzone(value);
             value = ApplyMapping(value);
             value = GetTemporalAverage(value);
