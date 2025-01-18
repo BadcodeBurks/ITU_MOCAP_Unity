@@ -99,6 +99,7 @@ namespace Burk
 
         private IEnumerator Calibrate(float calibrationDuration)
         {
+            Debug.Log("Calibrating");
             _isCalibrating = true;
             for (int i = 0; i < _bindings.Count; i++)
             {
@@ -110,6 +111,7 @@ namespace Burk
                 _controlList[i].value.EndCalibration();
             }
             _isCalibrating = false;
+            Debug.Log("Stopped calibration");
         }
     }
 }

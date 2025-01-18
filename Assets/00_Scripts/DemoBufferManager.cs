@@ -12,7 +12,7 @@ namespace Burk
         [SerializeField] ControlSet controlSet;
         [SerializeField] SimulatedBufferContainer simulatedBufferContainer;
         [SerializeField] PipeBufferContainer pipeBufferContainer;
-
+        [SerializeField] PipeBufferUIController pipeBufferUIController;
         [SerializeField] bool usePipeBuffer = false;
         [Header("Pipe Buffer Settings")][SerializeField] float calibrationDuration = 5f;
 
@@ -21,6 +21,7 @@ namespace Burk
 
             if (usePipeBuffer)
             {
+                pipeBufferUIController.OnCalibrate += CalibrateControls;
                 Debug.Log("Initializing pipe buffer");
                 pipeBufferContainer.SetMono(this);
                 pipeBufferContainer.Init();
@@ -59,6 +60,12 @@ namespace Burk
             controlSet.UnbindControls();
             StartPipeBuffer();
             controlSet.BindControls(pipeBufferContainer);
+        }
+
+        public void CalibrateControls(float calibrationDuration)
+        {
+            this.calibrationDuration = calibrationDuration;
+            controlSet.CalibrateControls(calibrationDuration);
         }
     }
 }

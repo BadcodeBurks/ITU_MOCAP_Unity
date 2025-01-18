@@ -43,7 +43,7 @@ namespace Burk
         {
             _isInitialized = true;
             cancellationTokenSource = null;
-            _routineMono.StartCoroutine(ReadFromPipe());
+            readRoutine = _routineMono.StartCoroutine(ReadFromPipe());
             OnBufferInitialized?.Invoke();
         }
 
