@@ -6,7 +6,6 @@ namespace Burk
 {
     public class DemoBufferManager : MonoBehaviour
     {
-
         [SerializeField] SensorUIController sensorUIController;
         // [SerializeField] HandRigController rigController;
         [SerializeField] ControlSet controlSet;

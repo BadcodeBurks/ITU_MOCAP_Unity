@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Burk
@@ -9,8 +8,15 @@ namespace Burk
     /// <summary>
     /// ControlSet
     /// </summary>
+    [ExecuteAlways]
     public class ControlSet : MonoBehaviour
     {
+        public static Action<ControlSet> OnControlSetValidated;
+        private void OnValidate()
+        {
+            OnControlSetValidated?.Invoke(this);
+        }
+
         [Serializable]
         public class ControlWrapper
         {
@@ -32,7 +38,6 @@ namespace Burk
 
         public void Init(BufferContainer buffer)
         {
-            // _isBound = false;
             InitControls();
             BindControls(buffer);
         }

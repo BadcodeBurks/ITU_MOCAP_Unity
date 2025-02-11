@@ -1,0 +1,73 @@
+using System;
+using System.Collections.Generic;
+using Unity.VisualScripting;
+using UnityEditor;
+using UnityEngine;
+
+namespace Burk
+{
+    public static class ControlsManager
+    {
+        private static Dictionary<int, ControlSet> _controlSets = new Dictionary<int, ControlSet>();
+
+        public static Action OnControlSetListChanged;
+
+        [InitializeOnLoadMethod]
+        private static void Init()
+        {
+            _controlSets = new Dictionary<int, ControlSet>();
+            ControlSet.OnControlSetValidated += OnControlSetValidated;
+            EditorApplication.hierarchyChanged += OnHierarchyChange;
+        }
+
+        private static void OnControlSetValidated(ControlSet controlSet)
+        {
+            int instanceID = controlSet.GetInstanceID();
+
+            if (_controlSets.ContainsKey(instanceID)) return;
+            if (controlSet.IsPrefabDefinition()) return;
+
+            AddControlSet(controlSet);
+        }
+
+
+        private static void OnHierarchyChange()
+        {
+            ValidateControlSets();
+        }
+
+        private static void ValidateControlSets()
+        {
+            int[] instanceIDs = new int[_controlSets.Count];
+            _controlSets.Keys.CopyTo(instanceIDs, 0);
+            for (int i = 0; i < instanceIDs.Length; i++)
+            {
+                if (EditorUtility.InstanceIDToObject(instanceIDs[i]) == null)
+                {
+                    RemoveControlSet(instanceIDs[i]);
+                }
+            }
+        }
+        private static void AddControlSet(ControlSet controlSet)
+        {
+            int instanceID = controlSet.GetInstanceID();
+            _controlSets.Add(instanceID, controlSet);
+            Debug.Log("ControlSet added: " + instanceID + " " + controlSet.name);
+        }
+        private static void RemoveControlSet(int instanceID)
+        {
+            _controlSets.Remove(instanceID);
+            Debug.Log("ControlSet removed: " + instanceID);
+        }
+
+        public static List<SerializedObject> GetControlSetProperties()
+        {
+            List<SerializedObject> properties = new List<SerializedObject>();
+            foreach (KeyValuePair<int, ControlSet> controlSet in _controlSets)
+            {
+                properties.Add(new SerializedObject(controlSet.Value));
+            }
+            return properties;
+        }
+    }
+}

@@ -416,7 +416,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 186713106}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.2690745, y: -1e-45, z: -0, w: 0.9631194}
+  m_LocalRotation: {x: 0.2690745, y: 3e-45, z: -1e-45, w: 0.9631194}
   m_LocalPosition: {x: 0, y: 3, z: -3.3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -530,12 +530,6 @@ MonoBehaviour:
   followZoom: {fileID: 186713109}
   rotateSpeed: 1000
   zoomMinMax: {x: 1.3, y: 4}
---- !u!4 &282220431 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 4050779879214809272, guid: bf01fdd44c5b8bc4d8f0903cec214ad9,
-    type: 3}
-  m_PrefabInstance: {fileID: 1332762240}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &293274257
 GameObject:
   m_ObjectHideFlags: 0
@@ -672,7 +666,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.2690745, y: -1e-45, z: -0, w: 0.9631194}
+  m_LocalRotation: {x: 0.2690745, y: 3e-45, z: -1e-45, w: 0.9631194}
   m_LocalPosition: {x: 0, y: 3, z: -3.3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1333,12 +1327,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &1052127399 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 8122637501866678866, guid: bf01fdd44c5b8bc4d8f0903cec214ad9,
-    type: 3}
-  m_PrefabInstance: {fileID: 1332762240}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1193475867
 GameObject:
   m_ObjectHideFlags: 0
@@ -1494,6 +1482,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  moveDuration: 0.3
 --- !u!1 &1213896877
 GameObject:
   m_ObjectHideFlags: 0
@@ -1716,6 +1705,11 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2801112687491511192, guid: bf01fdd44c5b8bc4d8f0903cec214ad9,
+        type: 3}
+      propertyPath: managedReferences[328146574299365412].valueRange.x
+      value: 925.74
+      objectReference: {fileID: 0}
     - target: {fileID: 3228033985896872237, guid: bf01fdd44c5b8bc4d8f0903cec214ad9,
         type: 3}
       propertyPath: m_IsActive
@@ -1810,24 +1804,8 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 5592818879480276191, guid: bf01fdd44c5b8bc4d8f0903cec214ad9,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1528596588}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf01fdd44c5b8bc4d8f0903cec214ad9, type: 3}
---- !u!1 &1332762241 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5592818879480276191, guid: bf01fdd44c5b8bc4d8f0903cec214ad9,
-    type: 3}
-  m_PrefabInstance: {fileID: 1332762240}
-  m_PrefabAsset: {fileID: 0}
---- !u!95 &1332762242 stripped
-Animator:
-  m_CorrespondingSourceObject: {fileID: 8090587471775703380, guid: bf01fdd44c5b8bc4d8f0903cec214ad9,
-    type: 3}
-  m_PrefabInstance: {fileID: 1332762240}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1386277854
 GameObject:
   m_ObjectHideFlags: 0
@@ -2041,312 +2019,18 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: -20, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1528596588
+--- !u!114 &1528596588 stripped
 MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 2801112687491511192, guid: bf01fdd44c5b8bc4d8f0903cec214ad9,
+    type: 3}
+  m_PrefabInstance: {fileID: 1332762240}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1332762241}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1e63519200a705942981189e330b946b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _configName: HandWithElbow
-  _name: RightHand
-  _controlList:
-  - value:
-      rid: 328146574299365412
-    key: T
-  - value:
-      rid: 328146574299365413
-    key: I
-  - value:
-      rid: 328146574299365414
-    key: M
-  - value:
-      rid: 328146574299365405
-    key: R
-  - value:
-      rid: 328146574299365407
-    key: P
-  - value:
-      rid: 328146574299365417
-    key: B
-  animator: {fileID: 1332762242}
-  references:
-    version: 2
-    RefIds:
-    - rid: 328146574299365405
-      type: {class: ParameterControl, ns: Burk, asm: Assembly-CSharp}
-      data:
-        _key: Ring
-        _controlType: 1
-        valueRange: {x: 941, y: 947}
-        mapRange: {x: 0, y: 1}
-        parameterName: Ring
-        autoMap: 1
-        inputDeadzone: 1.2
-        _lutCurve:
-          serializedVersion: 2
-          m_Curve:
-          - serializedVersion: 3
-            time: 0
-            value: 0
-            inSlope: 1.0671476
-            outSlope: 1.0671476
-            tangentMode: 0
-            weightedMode: 0
-            inWeight: 0
-            outWeight: 0.2235645
-          - serializedVersion: 3
-            time: 0.15773407
-            value: 0.113964915
-            inSlope: 0.1574107
-            outSlope: 0.1574107
-            tangentMode: 0
-            weightedMode: 0
-            inWeight: 0.33333334
-            outWeight: 0.108695336
-          - serializedVersion: 3
-            time: 0.5940214
-            value: 0.842547
-            inSlope: 1.0863065
-            outSlope: 1.0863065
-            tangentMode: 0
-            weightedMode: 0
-            inWeight: 0.20262776
-            outWeight: 0.20434387
-          - serializedVersion: 3
-            time: 1
-            value: 1
-            inSlope: 0.085573345
-            outSlope: 0.085573345
-            tangentMode: 0
-            weightedMode: 0
-            inWeight: 0.199819
-            outWeight: 0
-          m_PreInfinity: 2
-          m_PostInfinity: 2
-          m_RotationOrder: 4
-    - rid: 328146574299365407
-      type: {class: ParameterControl, ns: Burk, asm: Assembly-CSharp}
-      data:
-        _key: Pinky
-        _controlType: 1
-        valueRange: {x: 938, y: 945}
-        mapRange: {x: 0, y: 1}
-        parameterName: Pinky
-        autoMap: 1
-        inputDeadzone: 1.2
-        _lutCurve:
-          serializedVersion: 2
-          m_Curve:
-          - serializedVersion: 3
-            time: 0
-            value: 0
-            inSlope: 1.0671476
-            outSlope: 1.0671476
-            tangentMode: 0
-            weightedMode: 0
-            inWeight: 0
-            outWeight: 0.2235645
-          - serializedVersion: 3
-            time: 0.15773407
-            value: 0.113964915
-            inSlope: 0.1574107
-            outSlope: 0.1574107
-            tangentMode: 0
-            weightedMode: 0
-            inWeight: 0.33333334
-            outWeight: 0.108695336
-          - serializedVersion: 3
-            time: 0.5940214
-            value: 0.842547
-            inSlope: 1.0863065
-            outSlope: 1.0863065
-            tangentMode: 0
-            weightedMode: 0
-            inWeight: 0.20262776
-            outWeight: 0.20434387
-          - serializedVersion: 3
-            time: 1
-            value: 1
-            inSlope: 0.085573345
-            outSlope: 0.085573345
-            tangentMode: 0
-            weightedMode: 0
-            inWeight: 0.199819
-            outWeight: 0
-          m_PreInfinity: 2
-          m_PostInfinity: 2
-          m_RotationOrder: 4
-    - rid: 328146574299365412
-      type: {class: ParameterControl, ns: Burk, asm: Assembly-CSharp}
-      data:
-        _key: Thumb
-        _controlType: 1
-        valueRange: {x: 925, y: 933}
-        mapRange: {x: 0, y: 1}
-        parameterName: Thumb
-        autoMap: 1
-        inputDeadzone: 1.2
-        _lutCurve:
-          serializedVersion: 2
-          m_Curve:
-          - serializedVersion: 3
-            time: 0
-            value: 0
-            inSlope: 1.0671476
-            outSlope: 1.0671476
-            tangentMode: 0
-            weightedMode: 0
-            inWeight: 0
-            outWeight: 0.2235645
-          - serializedVersion: 3
-            time: 0.15773407
-            value: 0.113964915
-            inSlope: 0.1574107
-            outSlope: 0.1574107
-            tangentMode: 0
-            weightedMode: 0
-            inWeight: 0.33333334
-            outWeight: 0.108695336
-          - serializedVersion: 3
-            time: 0.5940214
-            value: 0.842547
-            inSlope: 1.0863065
-            outSlope: 1.0863065
-            tangentMode: 0
-            weightedMode: 0
-            inWeight: 0.20262776
-            outWeight: 0.20434387
-          - serializedVersion: 3
-            time: 1
-            value: 1
-            inSlope: 0.085573345
-            outSlope: 0.085573345
-            tangentMode: 0
-            weightedMode: 0
-            inWeight: 0.199819
-            outWeight: 0
-          m_PreInfinity: 2
-          m_PostInfinity: 2
-          m_RotationOrder: 4
-    - rid: 328146574299365413
-      type: {class: ParameterControl, ns: Burk, asm: Assembly-CSharp}
-      data:
-        _key: Index
-        _controlType: 1
-        valueRange: {x: 950, y: 958}
-        mapRange: {x: 0, y: 1}
-        parameterName: Index
-        autoMap: 1
-        inputDeadzone: 1.2
-        _lutCurve:
-          serializedVersion: 2
-          m_Curve:
-          - serializedVersion: 3
-            time: 0
-            value: 0
-            inSlope: 1.0671476
-            outSlope: 1.0671476
-            tangentMode: 0
-            weightedMode: 0
-            inWeight: 0
-            outWeight: 0.2235645
-          - serializedVersion: 3
-            time: 0.15773407
-            value: 0.113964915
-            inSlope: 0.1574107
-            outSlope: 0.1574107
-            tangentMode: 0
-            weightedMode: 0
-            inWeight: 0.33333334
-            outWeight: 0.108695336
-          - serializedVersion: 3
-            time: 0.5940214
-            value: 0.842547
-            inSlope: 1.0863065
-            outSlope: 1.0863065
-            tangentMode: 0
-            weightedMode: 0
-            inWeight: 0.20262776
-            outWeight: 0.20434387
-          - serializedVersion: 3
-            time: 1
-            value: 1
-            inSlope: 0.085573345
-            outSlope: 0.085573345
-            tangentMode: 0
-            weightedMode: 0
-            inWeight: 0.199819
-            outWeight: 0
-          m_PreInfinity: 2
-          m_PostInfinity: 2
-          m_RotationOrder: 4
-    - rid: 328146574299365414
-      type: {class: ParameterControl, ns: Burk, asm: Assembly-CSharp}
-      data:
-        _key: Middle
-        _controlType: 1
-        valueRange: {x: 955, y: 962}
-        mapRange: {x: 0, y: 1}
-        parameterName: Middle
-        autoMap: 1
-        inputDeadzone: 1.2
-        _lutCurve:
-          serializedVersion: 2
-          m_Curve:
-          - serializedVersion: 3
-            time: 0
-            value: 0
-            inSlope: 1.0671476
-            outSlope: 1.0671476
-            tangentMode: 0
-            weightedMode: 0
-            inWeight: 0
-            outWeight: 0.2235645
-          - serializedVersion: 3
-            time: 0.15773407
-            value: 0.113964915
-            inSlope: 0.1574107
-            outSlope: 0.1574107
-            tangentMode: 0
-            weightedMode: 0
-            inWeight: 0.33333334
-            outWeight: 0.108695336
-          - serializedVersion: 3
-            time: 0.5940214
-            value: 0.842547
-            inSlope: 1.0863065
-            outSlope: 1.0863065
-            tangentMode: 0
-            weightedMode: 0
-            inWeight: 0.20262776
-            outWeight: 0.20434387
-          - serializedVersion: 3
-            time: 1
-            value: 1
-            inSlope: 0.085573345
-            outSlope: 0.085573345
-            tangentMode: 0
-            weightedMode: 0
-            inWeight: 0.199819
-            outWeight: 0
-          m_PreInfinity: 2
-          m_PostInfinity: 2
-          m_RotationOrder: 4
-    - rid: 328146574299365417
-      type: {class: TransformControl, ns: Burk, asm: Assembly-CSharp}
-      data:
-        _key: HandBase
-        _controlType: 0
-        valueRange: {x: 0, y: 360}
-        mapRange: {x: 0, y: 360}
-        transform: {fileID: 1052127399}
-        imuTransform: {fileID: 282220431}
 --- !u!1 &1589902104
 GameObject:
   m_ObjectHideFlags: 0
