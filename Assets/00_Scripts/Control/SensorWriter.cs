@@ -1,4 +1,3 @@
-using Unity.Mathematics;
 using UnityEngine;
 
 namespace Burk
@@ -6,6 +5,7 @@ namespace Burk
     public class TensionSensorWriter
     {
         private int _bufferIndex;
+        public int BufferIndex => _bufferIndex;
         private SimulatedBufferContainer.BufferWriter _bufferWriter;
         public TensionSensorWriter(SimulatedBufferContainer.BufferWriter reader, int bufferIndex)
         {
@@ -22,6 +22,7 @@ namespace Burk
     public class IMUWriter
     {
         private int _bufferIndex;
+        public int BufferIndex => _bufferIndex;
         private SimulatedBufferContainer.BufferWriter _bufferWriter;
         public IMUWriter(SimulatedBufferContainer.BufferWriter reader, int bufferIndex)
         {

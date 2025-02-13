@@ -50,7 +50,7 @@ namespace Burk
             keys.AddRange(imuReaderKeys);
 
             CreateBuffer(tensionReaderCount, imuReaderCount);
-            CreateReaders(keys, tensionReaderCount, imuReaderCount);
+            CreateReaders(keys, tensionReaderCount, imuReaderCount, true);
             CreateWriters(keys, tensionReaderCount, imuReaderCount);
 
             _isInitialized = true;
@@ -108,6 +108,17 @@ namespace Burk
         public string[] GetIMUKeys()
         {
             return _imuWriterCache.Keys.ToArray();
+        }
+
+        public BufferWriter GetBufferWriter()
+        {
+            return _writer;
+        }
+
+        public List<string> GetAllKeys()
+        {
+            if (!_isInitialized) return null;
+            return _tensionWriterCache.Keys.Union(_imuWriterCache.Keys).ToList();
         }
     }
 }

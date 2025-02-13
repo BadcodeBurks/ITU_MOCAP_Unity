@@ -17,7 +17,6 @@ namespace Burk
 
         private void Start()
         {
-
             if (usePipeBuffer)
             {
                 pipeBufferUIController.OnCalibrate += CalibrateControls;

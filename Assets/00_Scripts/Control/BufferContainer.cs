@@ -56,7 +56,7 @@ namespace Burk
             _reader = new BufferReader(this);
         }
 
-        protected void CreateReaders(List<string> keys, int tensionSensorCount, int imuCount)
+        protected void CreateReaders(List<string> keys, int tensionSensorCount, int imuCount, bool useRaw = false)
         {
             _tensionReaderCache = new Dictionary<string, TensionSensorReader>();
             _imuReaderCache = new Dictionary<string, IMUReader>();
@@ -66,12 +66,12 @@ namespace Burk
                 int bufferIndex = GetBufferStartIndex(i);
                 if (i < tensionSensorCount)
                 {
-                    TensionSensorReader tr = new TensionSensorReader(_reader, bufferIndex);
+                    TensionSensorReader tr = new TensionSensorReader(_reader, bufferIndex, useRaw);
                     _tensionReaderCache.Add(key, tr);
                 }
                 else
                 {
-                    IMUReader ir = new IMUReader(_reader, bufferIndex);
+                    IMUReader ir = new IMUReader(_reader, bufferIndex, useRaw);
                     _imuReaderCache.Add(key, ir);
                 }
             }
@@ -99,6 +99,37 @@ namespace Burk
         public IMUReader GetIMUReader(string key)
         {
             if (_imuReaderCache.ContainsKey(key)) return _imuReaderCache[key];
+            return null;
+        }
+
+        public BufferContainer.BufferReader GetBufferReader()
+        {
+            return _reader;
+        }
+
+        public int GetKeyIndex(string key)
+        {
+            if (_tensionReaderCache.ContainsKey(key))
+            {
+                return _tensionReaderCache[key].BufferIndex;
+            }
+            else if (_imuReaderCache.ContainsKey(key))
+            {
+                return _imuReaderCache[key].BufferIndex;
+            }
+            return -1;
+        }
+
+        public Type GetKeyType(string key)
+        {
+            if (_tensionReaderCache.ContainsKey(key))
+            {
+                return typeof(float);
+            }
+            else if (_imuReaderCache.ContainsKey(key))
+            {
+                return typeof(Vector3);
+            }
             return null;
         }
 

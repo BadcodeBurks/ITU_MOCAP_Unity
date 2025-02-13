@@ -19,12 +19,16 @@ namespace Burk
             _isBound = true;
         }
 
-        public override void Unbind() => _isBound = false;
+        public override void Unbind(bool reset = false)
+        {
+            if (reset) _paramControl.Update(0, true);
+            _isBound = false;
+        }
 
         public override void Update()
         {
             if (!_isBound) return;
-            _paramControl.Update(_reader.Read());
+            _paramControl.Update(_reader.Read(), _reader.UseRaw);
             //TODO: Separate Reading and updating, for value processing.
         }
     }
@@ -53,8 +57,8 @@ namespace Burk
             if (!animator.TryGetNameHash(parameterName, out _parameterHash)) return;
             if (autoMap)
             {
-                valueRange.x = 0f;
-                valueRange.y = 1f;
+                _valueRange.x = 0f;
+                _valueRange.y = 1f;
             }
             _latestInput = 0f;
             _animator = animator;
@@ -65,12 +69,15 @@ namespace Burk
             return new TensionParameterControlBinding(readerKey, this);
         }
 
-        public void Update(float value)
+        public void Update(float value, bool useRaw)
         {
-            if (autoMap && _isCalibrating) ConfigureMapping(value);
-            value = ApplyDeadzone(value);
-            value = ApplyMapping(value);
-            value = GetTemporalAverage(value);
+            if (autoMap && _isCalibrating && !useRaw) ConfigureMapping(value);
+            if (!useRaw)
+            {
+                value = ApplyDeadzone(value);
+                value = ApplyMapping(value);
+                value = GetTemporalAverage(value);
+            }
             value = _lutCurve.Evaluate(value);
             _animator.SetFloat(_parameterHash, value);
         }
@@ -88,15 +95,15 @@ namespace Burk
         private void ConfigureMapping(float value)
         {
             if (value < 0.02f || value > 1024) return;
-            if (value < valueRange.x || valueRange.x <= 0.02f) valueRange.x = value;
-            if (value > valueRange.y || valueRange.y > 1024) valueRange.y = value;
+            if (value < _valueRange.x || _valueRange.x <= 0.02f) _valueRange.x = value;
+            if (value > _valueRange.y || _valueRange.y > 1024) _valueRange.y = value;
         }
 
-        private float ApplyMapping(float value) => (value - valueRange.x) / (valueRange.y - valueRange.x) * (mapRange.y - mapRange.x) + mapRange.x;
+        private float ApplyMapping(float value) => (value - _valueRange.x) / (_valueRange.y - _valueRange.x) * (mapRange.y - mapRange.x) + mapRange.x;
 
         private float GetTemporalAverage(float value)
         {
-            if (_values == null) _values = new float[20];
+            if (_values == null) _values = new float[10];
             Array.Copy(_values, 1, _values, 0, _values.Length - 1);
             _values[_values.Length - 1] = value;
             float sum = 0f;

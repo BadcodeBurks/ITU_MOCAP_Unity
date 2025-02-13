@@ -14,6 +14,7 @@ namespace Burk
         public static Action<ControlSet> OnControlSetValidated;
         private void OnValidate()
         {
+            Debug.Log("OnValidate");
             OnControlSetValidated?.Invoke(this);
         }
 
@@ -33,13 +34,14 @@ namespace Burk
         [SerializeField] private Animator animator;
 
         private bool _isBound = false;
+        public bool IsBound => _isBound;
         private bool _isCalibrating;
 
 
         public void Init(BufferContainer buffer)
         {
             InitControls();
-            BindControls(buffer);
+            if (buffer != null) BindControls(buffer);
         }
 
         private void InitControls()
@@ -59,16 +61,16 @@ namespace Burk
                 _controlList[i].value.ResetCalibration();
                 _bindings[i].Bind(buffer);
             }
-
             _isBound = true;
         }
 
-        public void UnbindControls()
+        public void UnbindControls(bool resetPositions = false)
         {
             for (int i = 0; i < _bindings.Count; i++)
             {
-                _bindings[i].Unbind();
+                _bindings[i].Unbind(resetPositions);
             }
+            if (resetPositions) animator.Update(0);
             _isBound = false;
         }
 
@@ -94,6 +96,9 @@ namespace Burk
             {
                 _bindings[i].Update();
             }
+#if UNITY_EDITOR
+            animator.Update(EditorTime.DeltaTime);
+#endif
         }
 
         public void CalibrateControls(float calibrationDuration)

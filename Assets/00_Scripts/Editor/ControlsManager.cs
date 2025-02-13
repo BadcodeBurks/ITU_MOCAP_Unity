@@ -12,12 +12,33 @@ namespace Burk
 
         public static Action OnControlSetListChanged;
 
+        public static BufferContainer _activeBuffer;
+        public static BufferContainer ActiveBuffer => _activeBuffer;
+
         [InitializeOnLoadMethod]
         private static void Init()
         {
             _controlSets = new Dictionary<int, ControlSet>();
             ControlSet.OnControlSetValidated += OnControlSetValidated;
             EditorApplication.hierarchyChanged += OnHierarchyChange;
+            EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
+        }
+
+        private static void OnPlayModeStateChanged(PlayModeStateChange state)
+        {
+            if (state == PlayModeStateChange.ExitingPlayMode)
+            {
+                foreach (KeyValuePair<int, ControlSet> controlSet in _controlSets)
+                {
+                    if (controlSet.Value != null)
+                        controlSet.Value.UnbindControls(true);
+                }
+            }
+
+            if (state == PlayModeStateChange.EnteredEditMode)
+            {
+                //TODO: find objects again in scene
+            }
         }
 
         private static void OnControlSetValidated(ControlSet controlSet)
@@ -29,7 +50,6 @@ namespace Burk
 
             AddControlSet(controlSet);
         }
-
 
         private static void OnHierarchyChange()
         {
@@ -52,12 +72,15 @@ namespace Burk
         {
             int instanceID = controlSet.GetInstanceID();
             _controlSets.Add(instanceID, controlSet);
-            Debug.Log("ControlSet added: " + instanceID + " " + controlSet.name);
+            controlSet.Init(null);
+            Debug.Log("Added control set: " + controlSet.Name);
+            OnControlSetListChanged?.Invoke();
         }
         private static void RemoveControlSet(int instanceID)
         {
             _controlSets.Remove(instanceID);
-            Debug.Log("ControlSet removed: " + instanceID);
+            Debug.Log("Removed control set: " + instanceID);
+            OnControlSetListChanged?.Invoke();
         }
 
         public static List<SerializedObject> GetControlSetProperties()
@@ -65,9 +88,15 @@ namespace Burk
             List<SerializedObject> properties = new List<SerializedObject>();
             foreach (KeyValuePair<int, ControlSet> controlSet in _controlSets)
             {
+                if (controlSet.Value == null) continue;
                 properties.Add(new SerializedObject(controlSet.Value));
             }
             return properties;
+        }
+
+        public static void SetActiveBuffer(BufferContainer buffer)
+        {
+            _activeBuffer = buffer;
         }
     }
 }
