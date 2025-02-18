@@ -1,9 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Burk
 {
+    [ExecuteAlways]
     public class DemoBufferManager : MonoBehaviour
     {
         [SerializeField] SensorUIController sensorUIController;
@@ -17,6 +16,7 @@ namespace Burk
 
         private void Start()
         {
+            if (!Application.isPlaying) return;
             if (usePipeBuffer)
             {
                 pipeBufferUIController.OnCalibrate += CalibrateControls;

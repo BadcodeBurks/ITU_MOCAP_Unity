@@ -49,6 +49,7 @@ namespace Burk
         public void Init()
         {
             FindRotationMatrix();
+            _valueRange = new Vector2(0f, 360f);
         }
 
         public override SensorBinding CreateBinding(string readerKey)
@@ -64,7 +65,6 @@ namespace Burk
         public void Update(Vector3 val, bool useRaw = false)
         {
             Vector3 temp = val;
-            //Debug.Log(val);
             if (!useRaw)
             {
                 val.z = (temp.x - _valueRange.x) / (_valueRange.y - _valueRange.x) * (mapRange.y - mapRange.x) + mapRange.x;

@@ -104,8 +104,11 @@ namespace Burk
         private float GetTemporalAverage(float value)
         {
             if (_values == null) _values = new float[10];
-            Array.Copy(_values, 1, _values, 0, _values.Length - 1);
-            _values[_values.Length - 1] = value;
+            int sourceIndex = _values.Length == 0 ? 0 : 1;
+            float[] newValues = new float[_values.Length + 1];
+            Array.Copy(_values, sourceIndex, newValues, 0, Mathf.Clamp(_values.Length - 1, 0, 9));
+            newValues[newValues.Length - 1] = value;
+            _values = newValues;
             float sum = 0f;
             foreach (float val in _values) sum += val;
             return sum / _values.Length;

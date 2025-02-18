@@ -37,7 +37,13 @@ namespace Burk
 
             if (state == PlayModeStateChange.EnteredEditMode)
             {
-                //TODO: find objects again in scene
+                ControlSet[] controlSets = GameObject.FindObjectsOfType<ControlSet>();
+                _controlSets = new Dictionary<int, ControlSet>();
+                foreach (ControlSet controlSet in controlSets)
+                {
+                    if (controlSet.IsPrefabDefinition()) continue;
+                    AddControlSet(controlSet);
+                }
             }
         }
 

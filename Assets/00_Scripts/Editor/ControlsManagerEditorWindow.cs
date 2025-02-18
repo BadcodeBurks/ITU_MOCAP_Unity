@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
@@ -24,11 +25,33 @@ namespace Burk
             public Editor cachedEditor;
         }
 
+        private class BufferWrapper
+        {
+            public bool isInitializing = false;
+            private BufferContainer container;
+            public BufferContainer Container => container;
+            public Action<BufferWrapper> OnBufferWrapperInitialized;
+            public void SetBuffer(BufferContainer buffer)
+            {
+                isInitializing = true;
+                container = buffer;
+                container.OnBufferInitialized += OnBufferInitialized;
+                container.Init();
+            }
+
+            private void OnBufferInitialized()
+            {
+                isInitializing = false;
+                OnBufferWrapperInitialized?.Invoke(this);
+            }
+        }
+
         List<SerializedObject> _controls;
 
         List<ControlWrapper> _cachedEditors;
         private bool _isEditable;
 
+        List<BufferWrapper> _buffers;
 
         void OnEnable()
         {
@@ -36,7 +59,9 @@ namespace Burk
             ControlsManager.OnControlSetListChanged += GetControls;
             AssemblyReloadEvents.beforeAssemblyReload += OnAssemblyReload;
             EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
+            EditorApplication.update += OnEditorUpdate;
             GetControls();
+            GetBuffers();
         }
 
         void OnAssemblyReload()
@@ -49,10 +74,23 @@ namespace Burk
             if (state == PlayModeStateChange.ExitingEditMode)
             {
                 UnbindAll();
+                ResetBuffers();
+
             }
             else if (state == PlayModeStateChange.EnteredEditMode)
             {
                 GetControls();
+            }
+        }
+        void ResetBuffers()
+        {
+            if (_buffers == null) return;
+            foreach (BufferWrapper buffer in _buffers)
+            {
+                if (buffer.Container.GetType() == typeof(PipeBufferContainer))
+                {
+                    (buffer.Container as PipeBufferContainer).StopClient();
+                }
             }
         }
 
@@ -68,6 +106,7 @@ namespace Burk
         void OnDisable()
         {
             EditorApplication.playModeStateChanged -= OnPlayModeStateChanged;
+            EditorApplication.update -= OnEditorUpdate;
             AssemblyReloadEvents.beforeAssemblyReload -= OnAssemblyReload;
             ControlsManager.OnControlSetListChanged -= GetControls;
         }
@@ -88,21 +127,71 @@ namespace Burk
             Repaint();
         }
 
+        void GetBuffers()
+        {
+            ResetBuffers();
+            _buffers = new List<BufferWrapper>();
+            string[] containerGUIDs = AssetDatabase.FindAssets("t:BufferContainer");
+            for (int i = 0; i < containerGUIDs.Length; i++)
+            {
+                BufferWrapper wrapper = new BufferWrapper();
+                _buffers.Add(wrapper);
+                wrapper.OnBufferWrapperInitialized += OnBufferInitialized;
+                wrapper.SetBuffer(AssetDatabase.LoadAssetAtPath<BufferContainer>(AssetDatabase.GUIDToAssetPath(containerGUIDs[i])));
+            }
+            Repaint();
+        }
+
+        void OnBufferInitialized(BufferWrapper buffer)
+        {
+            buffer.OnBufferWrapperInitialized -= OnBufferInitialized;
+            Repaint();
+        }
+
         void OnGUI()
         {
             _isEditable = !Application.isPlaying;
             GUI.enabled = _isEditable;
+            if (_buffers == null) return;
             if (_cachedEditors == null) return;
+
+            foreach (BufferWrapper buffer in _buffers)
+            {
+                DrawBuffer(buffer);
+            }
+
             foreach (ControlWrapper control in _cachedEditors)
             {
                 DrawControl(control);
             }
-
             GUI.enabled = true;
             EditorGUILayout.Space();
             if (GUILayout.Button("Refresh"))
             {
+                UnbindAll();
                 GetControls();
+                GetBuffers();
+            }
+        }
+
+        void DrawBuffer(BufferWrapper buffer)
+        {
+            bool isActiveBuffer = buffer.Container == ControlsManager.ActiveBuffer;
+            using (new GUILayout.HorizontalScope())
+            {
+                Color bg = GUI.backgroundColor;
+                GUI.backgroundColor = isActiveBuffer ? Color.green : Color.white;
+                if (buffer.isInitializing)
+                {
+                    GUI.backgroundColor = Color.yellow;
+                    GUI.enabled = false;
+                }
+                if (GUILayout.Button(buffer.Container.name, EditorStyles.miniButton))
+                {
+                    if (!isActiveBuffer) ControlsManager.SetActiveBuffer(buffer.Container);
+                }
+                GUI.backgroundColor = bg;
+                GUI.enabled = true;
             }
         }
 
@@ -148,12 +237,25 @@ namespace Burk
                     if (GUILayout.Button("Bind"))
                     {
                         controlSet.BindControls(ControlsManager.ActiveBuffer);
-                        SceneView.lastActiveSceneView.sceneViewState.SetAllEnabled(true);
+                        SceneView.lastActiveSceneView.sceneViewState.alwaysRefresh = true;
+
                     }
                     GUI.enabled = _isEditable;
                 }
                 GUI.backgroundColor = guiBGColor;
             }
+        }
+
+        private void OnEditorUpdate()
+        {
+            bool update = false;
+            for (int i = 0; i < _cachedEditors.Count; i++)
+            {
+                ControlSet control = _cachedEditors[i].cachedEditor.target as ControlSet;
+                if (control != null) control.Update();
+            }
+            if (!update) return;
+            SceneView.RepaintAll();
         }
     }
 }
