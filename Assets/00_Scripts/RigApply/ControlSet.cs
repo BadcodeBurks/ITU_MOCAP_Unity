@@ -61,6 +61,7 @@ namespace Burk
                 _controlList[i].value.ResetCalibration();
                 _bindings[i].Bind(buffer);
             }
+            Debug.Log($"{name} is Bound to " + buffer.name);
             _isBound = true;
         }
 
@@ -92,6 +93,7 @@ namespace Burk
         public void Update()
         {
             if (!_isBound) return;
+            Debug.Log("Updating");
             for (int i = 0; i < _bindings.Count; i++)
             {
                 _bindings[i].Update();

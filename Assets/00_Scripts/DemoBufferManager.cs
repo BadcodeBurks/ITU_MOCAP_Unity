@@ -39,6 +39,7 @@ namespace Burk
 
         private void StartPipeBuffer()
         {
+            if (!Application.isPlaying) return;
             pipeBufferContainer.OnBufferInitialized += () =>
             {
                 controlSet.Init(pipeBufferContainer);

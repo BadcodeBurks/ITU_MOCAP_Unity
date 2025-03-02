@@ -5,6 +5,7 @@ using System.IO.Pipes;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using Unity.EditorCoroutines.Editor;
 using UnityEngine;
 
 namespace Burk
@@ -17,6 +18,9 @@ namespace Burk
         CancellationTokenSource cancellationTokenSource;
         CancellationToken token;
         Coroutine readRoutine;
+#if UNITY_EDITOR
+        EditorCoroutine editorReadRoutine;
+#endif
         MonoBehaviour _routineMono;
 
         public void SetMono(MonoBehaviour mono)
@@ -30,11 +34,6 @@ namespace Burk
             List<string> keys = new List<string> { "T", "I", "M", "R", "P", "B" };
             CreateBuffer(5, 1);
             CreateReaders(keys, 5, 1);
-
-#if UNITY_EDITOR
-            SetMono(FindObjectOfType<DemoBufferManager>());
-            CreateClient();
-#endif
         }
 
         public void CreateClient()
@@ -49,7 +48,9 @@ namespace Burk
             _isInitialized = true;
             cancellationTokenSource = null;
             if (Application.isPlaying) readRoutine = _routineMono.StartCoroutine(ReadFromPipe());
-            else readRoutine = _routineMono.StartCoroutine(ReadFromPipe());
+#if UNITY_EDITOR
+            else editorReadRoutine = EditorCoroutineUtility.StartCoroutine(ReadFromPipe(), this);
+#endif
             OnBufferInitialized?.Invoke();
         }
 

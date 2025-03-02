@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEditor;
+using UnityEditor.ShaderGraph;
 using UnityEngine;
 
 namespace Burk
@@ -18,14 +19,16 @@ namespace Burk
             return window;
         }
 
-        private class ControlWrapper
+
+
+        public class ControlWrapper
         {
             public bool isExpanded;
             public Vector2 scrollPosition;
             public Editor cachedEditor;
         }
 
-        private class BufferWrapper
+        public class BufferWrapper
         {
             public bool isInitializing = false;
             private BufferContainer container;
@@ -50,8 +53,10 @@ namespace Burk
 
         List<ControlWrapper> _cachedEditors;
         private bool _isEditable;
-
         List<BufferWrapper> _buffers;
+
+        BufferRecorder _recorder;
+        BufferRecordPlayer _player;
 
         void OnEnable()
         {
@@ -60,6 +65,11 @@ namespace Burk
             AssemblyReloadEvents.beforeAssemblyReload += OnAssemblyReload;
             EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
             EditorApplication.update += OnEditorUpdate;
+            _recorder = new BufferRecorder();
+            _recorder.Init();
+            _recorder.OnRecorded += OnNewRecordingCaptured;
+            _player = new BufferRecordPlayer();
+            _player.Init();
             GetControls();
             GetBuffers();
         }
@@ -84,6 +94,7 @@ namespace Burk
         }
         void ResetBuffers()
         {
+            _recorder.UnsetBuffer();
             if (_buffers == null) return;
             foreach (BufferWrapper buffer in _buffers)
             {
@@ -96,6 +107,7 @@ namespace Burk
 
         void UnbindAll()
         {
+            _recorder.UnsetBuffer();
             foreach (ControlWrapper control in _cachedEditors)
             {
                 ControlSet c = control.cachedEditor.target as ControlSet;
@@ -105,6 +117,7 @@ namespace Burk
 
         void OnDisable()
         {
+            _recorder.OnRecorded -= OnNewRecordingCaptured;
             EditorApplication.playModeStateChanged -= OnPlayModeStateChanged;
             EditorApplication.update -= OnEditorUpdate;
             AssemblyReloadEvents.beforeAssemblyReload -= OnAssemblyReload;
@@ -142,6 +155,12 @@ namespace Burk
             Repaint();
         }
 
+        void OnNewRecordingCaptured(BufferRecording recording)
+        {
+            Debug.Log("OnNewRecordingCaptured: " + recording.GetDuration() + " " + recording.GetFrameCount());
+            _player.SetRecord(recording);
+        }
+
         void OnBufferInitialized(BufferWrapper buffer)
         {
             buffer.OnBufferWrapperInitialized -= OnBufferInitialized;
@@ -155,23 +174,32 @@ namespace Burk
             if (_buffers == null) return;
             if (_cachedEditors == null) return;
 
-            foreach (BufferWrapper buffer in _buffers)
+            GUILayout.Label("Buffers", EditorStyles.centeredGreyMiniLabel);
+            using (new EditorGUILayout.VerticalScope(EditorStyles.helpBox))
             {
-                DrawBuffer(buffer);
+                foreach (BufferWrapper buffer in _buffers)
+                {
+                    DrawBuffer(buffer);
+                }
             }
-
-            foreach (ControlWrapper control in _cachedEditors)
+            GUILayout.Label("Controls", EditorStyles.centeredGreyMiniLabel);
+            using (new EditorGUILayout.VerticalScope(EditorStyles.helpBox))
             {
-                DrawControl(control);
+                foreach (ControlWrapper control in _cachedEditors)
+                {
+                    DrawControl(control);
+                }
+                GUILayout.FlexibleSpace();
             }
             GUI.enabled = true;
-            EditorGUILayout.Space();
             if (GUILayout.Button("Refresh"))
             {
                 UnbindAll();
                 GetControls();
                 GetBuffers();
             }
+            DrawRecorder();
+            DrawPlayer();
         }
 
         void DrawBuffer(BufferWrapper buffer)
@@ -189,10 +217,83 @@ namespace Burk
                 if (GUILayout.Button(buffer.Container.name, EditorStyles.miniButton))
                 {
                     if (!isActiveBuffer) ControlsManager.SetActiveBuffer(buffer.Container);
+                    _recorder.SetBuffer(buffer.Container);
                 }
                 GUI.backgroundColor = bg;
                 GUI.enabled = true;
             }
+        }
+        void DrawRecorder()
+        {
+            bool guiEnabled = GUI.enabled;
+            GUI.enabled = _recorder.CanRecord;
+
+            using (new GUILayout.HorizontalScope())
+            {
+                if (_recorder.IsRecording)
+                {
+                    GUI.color = Color.red;
+                    if (GUILayout.Button("Stop Recording"))
+                    {
+                        _recorder.StopRecording();
+                    }
+
+                    GUI.color = Color.white;
+                    GUILayout.Label($"{_recorder.RecordTime:00.00}", GUILayout.Width(50));
+                }
+                else
+                {
+                    GUI.color = Color.green;
+                    if (GUILayout.Button("Start Recording"))
+                    {
+                        _recorder.StartRecording();
+                    }
+                }
+                GUI.color = Color.white;
+            }
+            GUI.enabled = guiEnabled;
+        }
+
+        void DrawPlayer()
+        {
+            bool guiEnabled = GUI.enabled;
+            GUI.enabled = _player.CanPlay;
+            using (new GUILayout.HorizontalScope())
+            {
+                if (!_player.IsPlaying)
+                {
+                    if (GUILayout.Button("Play", GUILayout.Width(50)))
+                    {
+                        List<ControlSet> controlSets = new List<ControlSet>();
+                        for (int i = 0; i < _cachedEditors.Count; i++)
+                        {
+                            ControlSet controlSet = _cachedEditors[i].cachedEditor.target as ControlSet;
+                            if (controlSet.IsBound)
+                            {
+                                controlSet.UnbindControls(true);
+                                controlSet.BindControls(_player.Buffer);
+                                controlSets.Add(controlSet);
+                            }
+                        }
+                        _player.OnPlayFinished += () =>
+                        {
+                            for (int i = 0; i < controlSets.Count; i++)
+                            {
+                                controlSets[i].UnbindControls(true);
+                            }
+                        };
+                        _player.StartPlaying();
+                    }
+                }
+                else
+                {
+                    if (GUILayout.Button("Stop", GUILayout.Width(50)))
+                    {
+                        _player.StopPlaying();
+                    }
+                }
+            }
+            GUI.enabled = guiEnabled;
         }
 
         void DrawControl(ControlWrapper control)
@@ -204,7 +305,7 @@ namespace Burk
                 {
                     EditorGUILayout.BeginHorizontal();
                     EditorGUILayout.Space();
-                    using (var scope = new EditorGUILayout.ScrollViewScope(control.scrollPosition, GUILayout.Width(position.width - 10)))
+                    using (var scope = new EditorGUILayout.ScrollViewScope(control.scrollPosition, GUILayout.Width(EditorGUIUtility.currentViewWidth - 20)))
                     {
                         control.scrollPosition = scope.scrollPosition;
                         control.cachedEditor.OnInspectorGUI();
@@ -248,14 +349,18 @@ namespace Burk
 
         private void OnEditorUpdate()
         {
-            bool update = false;
+            if (ControlsManager.ActiveBuffer == null) return;
+            bool update = _recorder.IsRecording || _player.IsPlaying;
+            _recorder.UpdateRecord();
+            _player.OnUpdate();
             for (int i = 0; i < _cachedEditors.Count; i++)
             {
                 ControlSet control = _cachedEditors[i].cachedEditor.target as ControlSet;
-                if (control != null) control.Update();
+                if (control != null && control.IsBound) control.Update();
             }
             if (!update) return;
             SceneView.RepaintAll();
+            Repaint();
         }
     }
 }

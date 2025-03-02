@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Burk
@@ -39,6 +40,7 @@ namespace Burk
         protected float[] m_Buffer;
 
         public Action OnBufferInitialized;
+        public Action OnBufferWrite;
 
         private void OnEnable()
         {
@@ -88,11 +90,16 @@ namespace Burk
             }
         }
         private float Read(int index) => m_Buffer[index];
-        protected void Write(int index, float value) => m_Buffer[index] = value;
+        protected void Write(int index, float value)
+        {
+            m_Buffer[index] = value;
+            OnBufferWrite?.Invoke();
+        }
 
         public TensionSensorReader GetTensionReader(string key)
         {
             if (_tensionReaderCache.ContainsKey(key)) return _tensionReaderCache[key];
+            Debug.Log("No Reader With Key: " + key);
             return null;
         }
 
@@ -133,10 +140,37 @@ namespace Burk
             return null;
         }
 
+        public virtual float[] ReadFullBuffer()
+        {
+            return m_Buffer;
+        }
+
+        public virtual void WriteFullBuffer(float[] buffer)
+        {
+            buffer.CopyTo(m_Buffer, 0);
+#if UNITY_EDITOR
+            UnityEditor.EditorUtility.SetDirty(this);
+#endif
+            OnBufferWrite?.Invoke();
+        }
+
         public virtual IEnumerator ReadFromPipe()
         {
             Debug.Log("Empty Coroutine");
             yield return null;
+        }
+
+        public BufferContainer Clone()
+        {
+            BufferContainer newContainer = ScriptableObject.CreateInstance<BufferContainer>();
+            List<string> keys = _tensionReaderCache.Keys.ToList();
+            int tensionCount = keys.Count;
+            keys.AddRange(_imuReaderCache.Keys.ToList());
+            int imuCount = keys.Count - tensionCount;
+            newContainer.CreateBuffer(tensionCount, imuCount);
+            newContainer.CreateReaders(keys, tensionCount, imuCount, true);
+            newContainer.Init();
+            return newContainer;
         }
     }
 }
