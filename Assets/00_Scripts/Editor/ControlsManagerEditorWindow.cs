@@ -337,7 +337,7 @@ namespace Burk
                     GUI.enabled = ControlsManager.ActiveBuffer != null;
                     if (GUILayout.Button("Bind"))
                     {
-                        controlSet.BindControls(ControlsManager.ActiveBuffer);
+                        controlSet.BindControls(ControlsManager.ActiveBuffer, ControlsManager.ActiveBuffer is PipeBufferContainer);
                         SceneView.lastActiveSceneView.sceneViewState.alwaysRefresh = true;
 
                     }

@@ -33,7 +33,10 @@ namespace Burk
             _reader = new BufferReader(this);
             List<string> keys = new List<string> { "T", "I", "M", "R", "P", "B" };
             CreateBuffer(5, 1);
-            CreateReaders(keys, 5, 1);
+            CreateReaders(keys, 5, 1, false);
+#if UNITY_EDITOR
+            if (!Application.isPlaying) CreateClient();
+#endif
         }
 
         public void CreateClient()
@@ -72,7 +75,7 @@ namespace Burk
                 if (cancellationTokenSource != null) cancellationTokenSource.Cancel();
                 return;
             }
-            _routineMono.StopCoroutine(readRoutine);
+            if (Application.isPlaying) _routineMono.StopCoroutine(readRoutine);
             if (pipeClient.IsConnected) pipeClient.Close();
         }
 
@@ -83,20 +86,24 @@ namespace Burk
             {
 
                 Debug.Log("connecting");
-                yield return null;
+                yield return Wait();
             }
             Debug.Log("Pipe connected");
             while (true)
             {
                 byte[] buffer = new byte[m_Buffer.Length * sizeof(float)];
-                //Debug.Log("Reading from pipe");
                 int bytesRead = 0;
                 TaskAwaiter aw = Task.Run(() => { bytesRead = pipeClient.Read(buffer, 0, buffer.Length); }).GetAwaiter();
-                while (!aw.IsCompleted) yield return null;
-                //Debug.Log("Read " + bytesRead);
-                yield return new WaitForEndOfFrame();
+                while (!aw.IsCompleted) yield return Wait();
                 if (bytesRead != buffer.Length) continue;
                 Buffer.BlockCopy(buffer, 0, m_Buffer, 0, bytesRead);
+            }
+            IEnumerator Wait()
+            {
+                if (Application.isPlaying) yield return new WaitForEndOfFrame();
+#if UNITY_EDITOR
+                else yield return new EditorWaitForSeconds(0.01f);
+#endif
             }
         }
     }

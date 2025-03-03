@@ -54,7 +54,7 @@ namespace Burk
             }
         }
 
-        public void BindControls(BufferContainer buffer)
+        public void BindControls(BufferContainer buffer, bool calibrate = false)
         {
             for (int i = 0; i < _bindings.Count; i++)
             {
@@ -63,6 +63,10 @@ namespace Burk
             }
             Debug.Log($"{name} is Bound to " + buffer.name);
             _isBound = true;
+            if (calibrate)
+            {
+                CalibrateControls(5f);
+            }
         }
 
         public void UnbindControls(bool resetPositions = false)
@@ -71,7 +75,7 @@ namespace Burk
             {
                 _bindings[i].Unbind(resetPositions);
             }
-            if (resetPositions) animator.Update(0);
+            if (resetPositions) animator.Rebind();
             _isBound = false;
         }
 
@@ -93,13 +97,13 @@ namespace Burk
         public void Update()
         {
             if (!_isBound) return;
-            Debug.Log("Updating");
             for (int i = 0; i < _bindings.Count; i++)
             {
                 _bindings[i].Update();
             }
 #if UNITY_EDITOR
-            animator.Update(EditorTime.DeltaTime);
+            //Debug.Log("EditorTime.DeltaTime: " + EditorTime.DeltaTime);
+            if (!Application.isPlaying) animator.Update(EditorTime.DeltaTime);
 #endif
         }
 
