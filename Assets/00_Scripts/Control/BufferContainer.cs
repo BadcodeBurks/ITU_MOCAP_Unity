@@ -41,6 +41,7 @@ namespace Burk
 
         public Action OnBufferInitialized;
         public Action OnBufferWrite;
+        private BufferMetadata metadata;
 
         private void OnEnable()
         {
@@ -58,34 +59,35 @@ namespace Burk
             _reader = new BufferReader(this);
         }
 
-        protected void CreateReaders(List<string> keys, int tensionSensorCount, int imuCount, bool useRaw = false)
+        protected void CreateReaders(BufferMetadata metadata, bool applyMappings = false)
         {
             _tensionReaderCache = new Dictionary<string, TensionSensorReader>();
             _imuReaderCache = new Dictionary<string, IMUReader>();
-            for (int i = 0; i < keys.Count; i++)
+            for (int i = 0; i < metadata.keys.Count; i++)
             {
-                string key = keys[i];
+                string key = metadata.keys[i];
                 int bufferIndex = GetBufferStartIndex(i);
-                if (i < tensionSensorCount)
+                if (i < metadata.tensionCount)
                 {
-                    TensionSensorReader tr = new TensionSensorReader(_reader, bufferIndex, useRaw);
+                    TensionSensorReader tr = new TensionSensorReader(_reader, bufferIndex, metadata.useRaw);
+                    if (applyMappings) tr.ApplyMapping(metadata.tensionCalibrations[i]);
                     _tensionReaderCache.Add(key, tr);
                 }
                 else
                 {
-                    IMUReader ir = new IMUReader(_reader, bufferIndex, useRaw);
+                    IMUReader ir = new IMUReader(_reader, bufferIndex, metadata.useRaw);
                     _imuReaderCache.Add(key, ir);
                 }
             }
             int GetBufferStartIndex(int i)
             {
-                if (i < tensionSensorCount)
+                if (i < metadata.tensionCount)
                 {
                     return i;
                 }
                 else
                 {
-                    return tensionSensorCount + (i - tensionSensorCount) * 3;
+                    return metadata.tensionCount + (i - metadata.tensionCount) * 3;
                 }
             }
         }
@@ -163,12 +165,10 @@ namespace Burk
         public BufferContainer Clone()
         {
             BufferContainer newContainer = ScriptableObject.CreateInstance<BufferContainer>();
-            List<string> keys = _tensionReaderCache.Keys.ToList();
-            int tensionCount = keys.Count;
-            keys.AddRange(_imuReaderCache.Keys.ToList());
-            int imuCount = keys.Count - tensionCount;
-            newContainer.CreateBuffer(tensionCount, imuCount);
-            newContainer.CreateReaders(keys, tensionCount, imuCount, true);
+            List<TensionSensorReader> tensionReaders = _tensionReaderCache.Values.ToList();
+            metadata.tensionCalibrations = tensionReaders.Select(x => x.GetMapping()).ToList();
+            newContainer.CreateBuffer(metadata.tensionCount, metadata.imuCount);
+            newContainer.CreateReaders(metadata, true);
             newContainer.Init();
             return newContainer;
         }

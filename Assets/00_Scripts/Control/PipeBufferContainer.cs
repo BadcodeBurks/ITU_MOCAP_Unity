@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Unity.EditorCoroutines.Editor;
 using UnityEngine;
+using UnityEngine.Profiling.Memory.Experimental;
 
 namespace Burk
 {
@@ -33,7 +34,14 @@ namespace Burk
             _reader = new BufferReader(this);
             List<string> keys = new List<string> { "T", "I", "M", "R", "P", "B" };
             CreateBuffer(5, 1);
-            CreateReaders(keys, 5, 1, false);
+            BufferMetadata meta = new BufferMetadata()
+            {
+                keys = keys,
+                tensionCount = 5,
+                imuCount = 1,
+                useRaw = false,
+            };
+            CreateReaders(meta);
 #if UNITY_EDITOR
             if (!Application.isPlaying) CreateClient();
 #endif

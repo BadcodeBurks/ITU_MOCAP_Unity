@@ -52,6 +52,13 @@ namespace Burk
 
             return _latestInput;
         }
+
+        public void ApplyMapping(Vector2 valueRange)
+        {
+            _valueRange = valueRange;
+        }
+
+        public Vector2 GetMapping() => _valueRange;
     }
 
     public class IMUReader

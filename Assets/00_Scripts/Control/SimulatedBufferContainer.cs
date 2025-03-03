@@ -50,8 +50,16 @@ namespace Burk
             keys.AddRange(imuReaderKeys);
 
             CreateBuffer(tensionReaderCount, imuReaderCount);
-            CreateReaders(keys, tensionReaderCount, imuReaderCount, true);
-            CreateWriters(keys, tensionReaderCount, imuReaderCount);
+            BufferMetadata meta = new BufferMetadata()
+            {
+                keys = keys,
+                tensionCount = tensionReaderCount,
+                imuCount = imuReaderCount,
+                useRaw = true,
+            };
+
+            CreateReaders(meta);
+            CreateWriters(meta.keys, meta.tensionCount, meta.imuCount);
 
             _isInitialized = true;
             OnBufferInitialized?.Invoke();
