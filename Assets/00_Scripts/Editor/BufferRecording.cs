@@ -1,10 +1,10 @@
-using System;
 using System.Collections.Generic;
-using UnityEngine;
 namespace Burk
 {
     public class BufferRecording
     {
+        private string _name = "no_name";
+        public string Name => _name;
         List<double> _timeStamps = new List<double>();
         List<float[]> _bufferValues;
 
@@ -13,6 +13,8 @@ namespace Burk
             _bufferValues = new List<float[]>();
             _timeStamps = new List<double>();
         }
+
+        public BufferRecording(string name) : this() => _name = name;
         public void AddRecordFrame(float[] bufferValues, double timeStamp)
         {
             _timeStamps.Add(timeStamp);
@@ -62,6 +64,8 @@ namespace Burk
             if (timeStampIndex >= _timeStamps.Count - 1) return _timeStamps[_timeStamps.Count - 1];
             return _timeStamps[timeStampIndex + 1];
         }
+
+        public double GetTimeStamp(int index) => _timeStamps[index];
 
         public float[] GetValues(int index) => _bufferValues[index];
 

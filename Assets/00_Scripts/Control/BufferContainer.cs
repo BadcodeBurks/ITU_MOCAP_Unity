@@ -61,6 +61,7 @@ namespace Burk
 
         protected void CreateReaders(BufferMetadata metadata, bool applyMappings = false)
         {
+            this.metadata = metadata;
             _tensionReaderCache = new Dictionary<string, TensionSensorReader>();
             _imuReaderCache = new Dictionary<string, IMUReader>();
             for (int i = 0; i < metadata.keys.Count; i++)

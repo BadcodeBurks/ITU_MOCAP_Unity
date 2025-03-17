@@ -58,7 +58,11 @@ namespace Burk
             _valueRange = valueRange;
         }
 
-        public Vector2 GetMapping() => _valueRange;
+        public Vector2 GetMapping()
+        {
+            if (UseRaw) return Vector2.up;
+            return _valueRange;
+        }
     }
 
     public class IMUReader

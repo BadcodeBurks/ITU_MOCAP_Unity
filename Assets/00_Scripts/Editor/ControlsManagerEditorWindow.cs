@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using UnityEditor;
-using UnityEditor.ShaderGraph;
 using UnityEngine;
 
 namespace Burk
@@ -58,9 +57,11 @@ namespace Burk
         BufferRecorder _recorder;
         BufferRecordPlayer _player;
 
+        private string _currentRecordingName = "";
+        private bool _isNameValid = false;
+
         void OnEnable()
         {
-            Debug.Log("ControlsManagerEditorWindow OnEnable");
             ControlsManager.OnControlSetListChanged += GetControls;
             AssemblyReloadEvents.beforeAssemblyReload += OnAssemblyReload;
             EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
@@ -70,6 +71,7 @@ namespace Burk
             _recorder.OnRecorded += OnNewRecordingCaptured;
             _player = new BufferRecordPlayer();
             _player.Init();
+            _currentRecordingName = "";
             GetControls();
             GetBuffers();
         }
@@ -157,7 +159,6 @@ namespace Burk
 
         void OnNewRecordingCaptured(BufferRecording recording)
         {
-            Debug.Log("OnNewRecordingCaptured: " + recording.GetDuration() + " " + recording.GetFrameCount());
             _player.SetRecord(recording);
         }
 
@@ -191,12 +192,32 @@ namespace Burk
                 }
                 GUILayout.FlexibleSpace();
             }
+            GUILayout.Label("Recordings", EditorStyles.centeredGreyMiniLabel);
+            using (new EditorGUILayout.VerticalScope(EditorStyles.helpBox))
+            {
+                foreach (string recordName in RecordsHandler.RecordNames)
+                {
+                    if (GUILayout.Button(recordName, EditorStyles.miniButton))
+                    {
+                        _player.SetRecord(RecordsHandler.GetRecording(recordName));
+                    }
+                }
+                Color guiTemp = GUI.color;
+                GUI.color = Color.green;
+                if (GUILayout.Button("Extract As CSV"))
+                {
+                    RecordsHandler.ExtractAllRecords();
+                    Debug.Log("Extracted");
+                }
+                GUI.color = guiTemp;
+            }
             GUI.enabled = true;
             if (GUILayout.Button("Refresh"))
             {
                 UnbindAll();
                 GetControls();
                 GetBuffers();
+                RecordsHandler.LoadAllRecords();
             }
             DrawRecorder();
             DrawPlayer();
@@ -258,41 +279,65 @@ namespace Burk
         {
             bool guiEnabled = GUI.enabled;
             GUI.enabled = _player.CanPlay;
-            using (new GUILayout.HorizontalScope())
+            using (new GUILayout.VerticalScope())
             {
-                if (!_player.IsPlaying)
+                using (new GUILayout.HorizontalScope())
                 {
-                    if (GUILayout.Button("Play", GUILayout.Width(50)))
+                    if (!_player.IsPlaying)
                     {
-                        List<ControlSet> controlSets = new List<ControlSet>();
-                        for (int i = 0; i < _cachedEditors.Count; i++)
+                        if (GUILayout.Button("Play", GUILayout.Width(50)))
                         {
-                            ControlSet controlSet = _cachedEditors[i].cachedEditor.target as ControlSet;
-                            if (controlSet.IsBound)
+                            List<ControlSet> controlSets = new List<ControlSet>();
+                            for (int i = 0; i < _cachedEditors.Count; i++)
                             {
-                                controlSet.UnbindControls(true);
-                                controlSet.BindControls(_player.Buffer);
-                                controlSets.Add(controlSet);
+                                ControlSet controlSet = _cachedEditors[i].cachedEditor.target as ControlSet;
+                                if (controlSet.IsBound)
+                                {
+                                    controlSet.UnbindControls(true);
+                                    controlSet.BindControls(_player.Buffer);
+                                    controlSets.Add(controlSet);
+                                }
                             }
+                            BufferContainer bufferCache = ControlsManager.ActiveBuffer;
+                            _player.OnPlayFinished += () =>
+                            {
+                                for (int i = 0; i < controlSets.Count; i++)
+                                {
+                                    controlSets[i].UnbindControls(true);
+                                    ControlsManager.SetActiveBuffer(bufferCache);
+                                }
+                            };
+                            _player.StartPlaying();
                         }
-                        _player.OnPlayFinished += () =>
+                    }
+                    else
+                    {
+                        if (GUILayout.Button("Stop", GUILayout.Width(50)))
                         {
-                            for (int i = 0; i < controlSets.Count; i++)
-                            {
-                                controlSets[i].UnbindControls(true);
-                            }
-                        };
-                        _player.StartPlaying();
+                            _player.StopPlaying();
+                        }
                     }
                 }
-                else
+                using (new GUILayout.HorizontalScope())
                 {
-                    if (GUILayout.Button("Stop", GUILayout.Width(50)))
+                    EditorGUI.BeginChangeCheck();
+                    _currentRecordingName = EditorGUILayout.TextField("Recording name: ", _currentRecordingName);
+                    if (EditorGUI.EndChangeCheck())
                     {
-                        _player.StopPlaying();
+                        _currentRecordingName = _currentRecordingName.SanitizeFilename();
+                        _isNameValid = _currentRecordingName.Length > 0 && !RecordsHandler.CheckFileExists(_currentRecordingName);
                     }
+                    bool guiTemp = GUI.enabled;
+                    GUI.enabled = _isNameValid;
+                    if (GUILayout.Button("Save", GUILayout.Width(50)))
+                    {
+                        RecordsHandler.SaveRecordingAsCSV(_player.GetRecording(), _currentRecordingName);
+                        _currentRecordingName = "";
+                    }
+                    GUI.enabled = guiTemp;
                 }
             }
+
             GUI.enabled = guiEnabled;
         }
 

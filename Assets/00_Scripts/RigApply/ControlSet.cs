@@ -14,7 +14,6 @@ namespace Burk
         public static Action<ControlSet> OnControlSetValidated;
         private void OnValidate()
         {
-            Debug.Log("OnValidate");
             OnControlSetValidated?.Invoke(this);
         }
 

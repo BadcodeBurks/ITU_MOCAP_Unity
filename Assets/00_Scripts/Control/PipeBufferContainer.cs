@@ -90,11 +90,21 @@ namespace Burk
 
         public override IEnumerator ReadFromPipe()
         {
+#if UNITY_EDITOR
+            float t = 0f;
+#endif
             while (!pipeClient.IsConnected)
             {
-
                 Debug.Log("connecting");
                 yield return Wait();
+#if UNITY_EDITOR
+                t += 0.02f;
+                if (t > 20f)
+                {
+                    Debug.Log("Pipe Connection Timeout, Refresh to try again");
+                    yield break;
+                }
+#endif
             }
             Debug.Log("Pipe connected");
             while (true)
@@ -110,6 +120,7 @@ namespace Burk
             {
                 if (Application.isPlaying) yield return new WaitForEndOfFrame();
 #if UNITY_EDITOR
+
                 else yield return new EditorWaitForSeconds(0.01f);
 #endif
             }

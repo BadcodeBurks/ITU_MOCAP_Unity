@@ -79,13 +79,11 @@ namespace Burk
             int instanceID = controlSet.GetInstanceID();
             _controlSets.Add(instanceID, controlSet);
             controlSet.Init(null);
-            Debug.Log("Added control set: " + controlSet.Name);
             OnControlSetListChanged?.Invoke();
         }
         private static void RemoveControlSet(int instanceID)
         {
             _controlSets.Remove(instanceID);
-            Debug.Log("Removed control set: " + instanceID);
             OnControlSetListChanged?.Invoke();
         }
 

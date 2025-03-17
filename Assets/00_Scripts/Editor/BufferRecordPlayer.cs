@@ -32,6 +32,7 @@ namespace Burk
         {
             if (_isRecordSet) UnsetRecord();
             if (r.GetDuration() <= .02d) return;
+            //TODO: Change this buffer creation to use recording data of the buffer
             _buffer = ControlsManager.ActiveBuffer.Clone();
             _buffer.name = "BufferRecordPlayer";
             _bufferRecording = r;
@@ -66,7 +67,6 @@ namespace Burk
         public void StartPlaying()
         {
             if (IsPlaying) return;
-            ControlsManager.SetActiveBuffer(_buffer);
             _lastPlayedIndex = 0;
             _isPlaying = true;
             recordPlayTime = 0;
@@ -85,6 +85,12 @@ namespace Burk
         public double StretchSlider(float sliderValue)
         {
             return _bufferRecording.GetDuration() * sliderValue;
+        }
+
+        internal BufferRecording GetRecording()
+        {
+            if (!_isRecordSet) return null;
+            return _bufferRecording;
         }
     }
 }
