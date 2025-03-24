@@ -12,7 +12,9 @@ namespace Burk
         BufferRecording _bufferRecording;
         bool _isRecordSet;
 
-        public bool CanPlay => _isRecordSet && _buffer.IsInitialized;
+        ControlSet _controlToBind;
+        bool _wasBoundToActiveBuffer;
+        public bool CanPlay => _isRecordSet && _buffer.IsInitialized && _controlToBind != null && !IsPlaying;
 
         #region Playing
         bool _isPlaying = false;
@@ -32,7 +34,7 @@ namespace Burk
         {
             if (_isRecordSet) UnsetRecord();
             if (r.GetDuration() <= .02d) return;
-            //TODO: Change this buffer creation to use recording data of the buffer
+            //TODO: Change this buffer creation and use recorded metadata.
             _buffer = ControlsManager.ActiveBuffer.Clone();
             _buffer.name = "BufferRecordPlayer";
             _bufferRecording = r;
@@ -67,6 +69,12 @@ namespace Burk
         public void StartPlaying()
         {
             if (IsPlaying) return;
+            if (_controlToBind.IsBound)
+            {
+                _wasBoundToActiveBuffer = _controlToBind.IsBound;
+                _controlToBind.UnbindControls(true);
+            }
+            _controlToBind.BindControls(_buffer);
             _lastPlayedIndex = 0;
             _isPlaying = true;
             recordPlayTime = 0;
@@ -76,9 +84,10 @@ namespace Burk
 
         public void StopPlaying()
         {
-            ControlsManager.SetActiveBuffer(null);
             _isPlaying = false;
             recordPlayTime = 0d;
+            _controlToBind.UnbindControls(true);
+            if (_wasBoundToActiveBuffer) _controlToBind.BindControls(ControlsManager.ActiveBuffer);
             OnPlayFinished?.Invoke();
         }
 
@@ -91,6 +100,12 @@ namespace Burk
         {
             if (!_isRecordSet) return null;
             return _bufferRecording;
+        }
+
+        internal void SetControl(ControlSet controlSet)
+        {
+            if (_isPlaying) return;
+            _controlToBind = controlSet;
         }
     }
 }

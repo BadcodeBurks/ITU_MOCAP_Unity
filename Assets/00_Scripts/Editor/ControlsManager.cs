@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
@@ -96,6 +97,23 @@ namespace Burk
                 properties.Add(new SerializedObject(controlSet.Value));
             }
             return properties;
+        }
+
+        public static string[] GetControlSetNames()
+        {
+            string[] names = new string[_controlSets.Count];
+            int i = 0;
+            foreach (KeyValuePair<int, ControlSet> controlSet in _controlSets)
+            {
+                names[i] = controlSet.Value.name;
+                i++;
+            }
+            return names;
+        }
+
+        public static ControlSet GetControlSetByNameOrder(int nameOrder)
+        {
+            return _controlSets.Values.ToList()[nameOrder];
         }
 
         public static void SetActiveBuffer(BufferContainer buffer)

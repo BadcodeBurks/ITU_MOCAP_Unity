@@ -36,6 +36,9 @@ namespace Burk
         BufferRecorder _recorder;
         BufferRecordPlayer _player;
 
+        string[] _controlSetNames;
+        int _selectedControlIndex = 0;
+
         void OnEnable()
         {
             _bufferRecords = new List<BufferRecordWrapper>();
@@ -44,6 +47,12 @@ namespace Burk
             _recorder.OnRecorded += OnNewRecordingCaptured;
             _player = new BufferRecordPlayer();
             _player.Init();
+            _controlSetNames = ControlsManager.GetControlSetNames();
+        }
+
+        void OnControlSetListChanged()
+        {
+            _controlSetNames = ControlsManager.GetControlSetNames();
         }
 
         void OnNewRecordingCaptured(BufferRecording recording)
@@ -57,7 +66,15 @@ namespace Burk
         {
             GUI.enabled = ControlsManager.ActiveBuffer != null;
             //TODO: Draw Settings:
-            //which control to play on
+            using (new EditorGUILayout.HorizontalScope(EditorStyles.toolbar))
+            {
+                int temp = EditorGUILayout.Popup("Control Set", _selectedControlIndex, _controlSetNames);
+                if (temp != _selectedControlIndex)
+                {
+                    _selectedControlIndex = temp;
+                    _player.SetControl(ControlsManager.GetControlSetByNameOrder(_selectedControlIndex));
+                }
+            }
 
             //TODO: Draw Record List
             //if there are no recordings draw accordingly

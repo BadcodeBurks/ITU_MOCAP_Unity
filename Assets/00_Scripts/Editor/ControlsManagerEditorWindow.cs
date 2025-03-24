@@ -74,6 +74,8 @@ namespace Burk
             _currentRecordingName = "";
             GetControls();
             GetBuffers();
+            //TODO: delete later
+            _player.SetControl(ControlsManager.GetControlSetByNameOrder(0));
         }
 
         void OnAssemblyReload()
@@ -207,11 +209,14 @@ namespace Burk
                 if (GUILayout.Button("Extract As CSV"))
                 {
                     RecordsHandler.ExtractAllRecords();
-                    Debug.Log("Extracted");
                 }
                 GUI.color = guiTemp;
             }
             GUI.enabled = true;
+
+            DrawRecorder();
+            DrawPlayer();
+
             if (GUILayout.Button("Refresh"))
             {
                 UnbindAll();
@@ -219,8 +224,6 @@ namespace Burk
                 GetBuffers();
                 RecordsHandler.LoadAllRecords();
             }
-            DrawRecorder();
-            DrawPlayer();
         }
 
         void DrawBuffer(BufferWrapper buffer)
@@ -287,26 +290,6 @@ namespace Burk
                     {
                         if (GUILayout.Button("Play", GUILayout.Width(50)))
                         {
-                            List<ControlSet> controlSets = new List<ControlSet>();
-                            for (int i = 0; i < _cachedEditors.Count; i++)
-                            {
-                                ControlSet controlSet = _cachedEditors[i].cachedEditor.target as ControlSet;
-                                if (controlSet.IsBound)
-                                {
-                                    controlSet.UnbindControls(true);
-                                    controlSet.BindControls(_player.Buffer);
-                                    controlSets.Add(controlSet);
-                                }
-                            }
-                            BufferContainer bufferCache = ControlsManager.ActiveBuffer;
-                            _player.OnPlayFinished += () =>
-                            {
-                                for (int i = 0; i < controlSets.Count; i++)
-                                {
-                                    controlSets[i].UnbindControls(true);
-                                    ControlsManager.SetActiveBuffer(bufferCache);
-                                }
-                            };
                             _player.StartPlaying();
                         }
                     }

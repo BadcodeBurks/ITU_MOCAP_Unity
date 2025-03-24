@@ -15,14 +15,14 @@ namespace Burk
         public override SensorType GetSensorType() => SensorType.Tension;
         public override void Bind(BufferContainer buffer)
         {
-            Debug.Log("binding " + _paramControl.Key + " to " + buffer.name);
+            //Debug.Log("binding " + _paramControl.Key + " to " + buffer.name);
             _reader = buffer.GetTensionReader(readerKey);
             _isBound = true;
         }
 
         public override void Unbind(bool reset = false)
         {
-            Debug.Log("Unbinding " + _paramControl.Key);
+            //Debug.Log("Unbinding " + _paramControl.Key);
             if (reset) _paramControl.Update(0, true);
             _isBound = false;
         }
@@ -31,7 +31,7 @@ namespace Burk
         {
             if (!_isBound) return;
             _paramControl.Update(_reader.Read(), _reader.UseRaw);
-            //TODO: Separate Reading and updating, for value processing.
+            //IDEA: Separate Reading and updating, for value processing.
         }
     }
 
