@@ -5,6 +5,11 @@ namespace Burk
     {
         private string _name = "no_name";
         public string Name => _name;
+
+        private BufferMetadata _bufferData;
+        public BufferMetadata BufferData => _bufferData;
+        public bool HasBufferData => _bufferData != null;
+
         List<double> _timeStamps = new List<double>();
         List<float[]> _bufferValues;
 
@@ -15,6 +20,8 @@ namespace Burk
         }
 
         public BufferRecording(string name) : this() => _name = name;
+
+        public void AddBufferData(BufferMetadata data) => _bufferData = data;
         public void AddRecordFrame(float[] bufferValues, double timeStamp)
         {
             _timeStamps.Add(timeStamp);

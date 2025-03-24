@@ -10,5 +10,16 @@ namespace Burk
         public int imuCount;
         public bool useRaw;
         public List<Vector2> tensionCalibrations;
+
+        public BufferMetadata Clone()
+        {
+            BufferMetadata clone = new BufferMetadata();
+            clone.keys = new List<string>(keys);
+            clone.tensionCount = tensionCount;
+            clone.imuCount = imuCount;
+            clone.useRaw = useRaw;
+            clone.tensionCalibrations = new List<Vector2>(tensionCalibrations);
+            return clone;
+        }
     }
 }

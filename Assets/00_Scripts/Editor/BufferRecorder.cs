@@ -75,6 +75,7 @@ namespace Burk
             Debug.Log("StartRecording: " + _buffer.name);
 
             currentRecording = new BufferRecording();
+            currentRecording.AddBufferData(_buffer.GetMetadata());
             _isRecording = true;
             _isBufferUpdated = true;
             recordStartTime = EditorApplication.timeSinceStartup;

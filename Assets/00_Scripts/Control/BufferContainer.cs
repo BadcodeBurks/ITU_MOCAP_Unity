@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Burk
@@ -32,6 +33,15 @@ namespace Burk
                 return val;
             }
         }
+
+        public static BufferContainer Create(BufferMetadata meta)
+        {
+            BufferContainer b = ScriptableObject.CreateInstance<BufferContainer>();
+            b.CreateBuffer(meta.tensionCount, meta.imuCount);
+            b.CreateReaders(meta, true);
+            b.Init();
+            return b;
+        }
         protected bool _isInitialized = false;
         public bool IsInitialized => _isInitialized;
         protected BufferReader _reader;
@@ -42,6 +52,11 @@ namespace Burk
         public Action OnBufferInitialized;
         public Action OnBufferWrite;
         private BufferMetadata metadata;
+        public BufferMetadata GetMetadata()
+        {
+            metadata.tensionCalibrations = _tensionReaderCache.Values.Select(x => x.GetMapping()).ToList();
+            return metadata.Clone();
+        }
 
         private void OnEnable()
         {

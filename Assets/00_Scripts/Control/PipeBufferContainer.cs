@@ -102,6 +102,7 @@ namespace Burk
                 if (t > 20f)
                 {
                     Debug.Log("Pipe Connection Timeout, Refresh to try again");
+                    pipeClient.Close();
                     yield break;
                 }
 #endif

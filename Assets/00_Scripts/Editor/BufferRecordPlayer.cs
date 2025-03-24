@@ -34,8 +34,7 @@ namespace Burk
         {
             if (_isRecordSet) UnsetRecord();
             if (r.GetDuration() <= .02d) return;
-            //TODO: Change this buffer creation and use recorded metadata.
-            _buffer = ControlsManager.ActiveBuffer.Clone();
+            _buffer = BufferContainer.Create(ControlsManager.ActiveBuffer.GetMetadata()); //TODO: use r.GetMetadata();
             _buffer.name = "BufferRecordPlayer";
             _bufferRecording = r;
             _isRecordSet = true;
