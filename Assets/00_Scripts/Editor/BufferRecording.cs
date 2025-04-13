@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using UnityEngine;
 namespace Burk
 {
     public class BufferRecording
@@ -24,6 +25,8 @@ namespace Burk
         public void AddBufferData(BufferMetadata data) => _bufferData = data;
         public void AddRecordFrame(float[] bufferValues, double timeStamp)
         {
+            Debug.Log("timestamp: " + timeStamp);
+
             _timeStamps.Add(timeStamp);
             _bufferValues.Add(bufferValues.Clone() as float[]);
         }
@@ -38,7 +41,7 @@ namespace Burk
             int index = _bufferValues.Count / 2;
             int lastIndex = index;
             int direction = -1;
-            int step = _bufferValues.Count / 2;
+            int step = _timeStamps.Count / 2;
             while (true)
             {
                 int temp = index;
@@ -49,7 +52,7 @@ namespace Burk
                         direction = -1;
                         step = step / 2 + 1;
                     }
-                    index += step;
+                    index -= step;
                 }
                 else if (_timeStamps[index] < time)
                 {
@@ -58,10 +61,15 @@ namespace Burk
                         direction = 1;
                         step = step / 2 + 1;
                     }
-                    index -= step;
+                    index += step;
                 }
+                index = Mathf.Clamp(index, 0, _timeStamps.Count - 1);
 
-                if (lastIndex == index) return index;
+                if (lastIndex == index)
+                {
+                    index = _timeStamps[index] < time ? index : index - 1;
+                    return index - 1;
+                }
                 lastIndex = temp;
             }
         }

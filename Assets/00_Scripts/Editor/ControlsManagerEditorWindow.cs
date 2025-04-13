@@ -73,7 +73,7 @@ namespace Burk
             _player.Init();
             _currentRecordingName = "";
             GetControls();
-            GetBuffers();
+            GetBufferWrappers();
             //TODO: delete later
             _player.SetControl(ControlsManager.GetControlSetByNameOrder(0));
         }
@@ -144,17 +144,19 @@ namespace Burk
             Repaint();
         }
 
-        void GetBuffers()
+
+
+        void GetBufferWrappers()
         {
             ResetBuffers();
             _buffers = new List<BufferWrapper>();
-            string[] containerGUIDs = AssetDatabase.FindAssets("t:BufferContainer");
-            for (int i = 0; i < containerGUIDs.Length; i++)
+            BufferContainer[] containers = ControlsManager.GetBuffers();
+            for (int i = 0; i < containers.Length; i++)
             {
                 BufferWrapper wrapper = new BufferWrapper();
                 _buffers.Add(wrapper);
                 wrapper.OnBufferWrapperInitialized += OnBufferInitialized;
-                wrapper.SetBuffer(AssetDatabase.LoadAssetAtPath<BufferContainer>(AssetDatabase.GUIDToAssetPath(containerGUIDs[i])));
+                wrapper.SetBuffer(containers[i]);
             }
             Repaint();
         }
@@ -162,6 +164,7 @@ namespace Burk
         void OnNewRecordingCaptured(BufferRecording recording)
         {
             _player.SetRecord(recording);
+            _player.SetControl(_controls[0].targetObject as ControlSet);
         }
 
         void OnBufferInitialized(BufferWrapper buffer)
@@ -194,24 +197,24 @@ namespace Burk
                 }
                 GUILayout.FlexibleSpace();
             }
-            GUILayout.Label("Recordings", EditorStyles.centeredGreyMiniLabel);
-            using (new EditorGUILayout.VerticalScope(EditorStyles.helpBox))
-            {
-                foreach (string recordName in RecordsHandler.RecordNames)
-                {
-                    if (GUILayout.Button(recordName, EditorStyles.miniButton))
-                    {
-                        _player.SetRecord(RecordsHandler.GetRecording(recordName));
-                    }
-                }
-                Color guiTemp = GUI.color;
-                GUI.color = Color.green;
-                if (GUILayout.Button("Extract As CSV"))
-                {
-                    RecordsHandler.ExtractAllRecords();
-                }
-                GUI.color = guiTemp;
-            }
+            // GUILayout.Label("Recordings", EditorStyles.centeredGreyMiniLabel);
+            // using (new EditorGUILayout.VerticalScope(EditorStyles.helpBox))
+            // {
+            //     foreach (string recordName in RecordsHandler.RecordNames)
+            //     {
+            //         if (GUILayout.Button(recordName, EditorStyles.miniButton))
+            //         {
+            //             _player.SetRecord(RecordsHandler.GetRecording(recordName));
+            //         }
+            //     }
+            //     Color guiTemp = GUI.color;
+            //     GUI.color = Color.green;
+            //     if (GUILayout.Button("Extract As CSV"))
+            //     {
+            //         RecordsHandler.ExtractAllRecords();
+            //     }
+            //     GUI.color = guiTemp;
+            // }
             GUI.enabled = true;
 
             DrawRecorder();
@@ -221,7 +224,7 @@ namespace Burk
             {
                 UnbindAll();
                 GetControls();
-                GetBuffers();
+                GetBufferWrappers();
                 RecordsHandler.LoadAllRecords();
             }
         }

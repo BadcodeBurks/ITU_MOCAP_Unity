@@ -16,6 +16,10 @@ namespace Burk
         public static BufferContainer _activeBuffer;
         public static BufferContainer ActiveBuffer => _activeBuffer;
 
+        private static BufferContainer[] _buffers;
+
+        public static BufferContainer[] Buffers => _buffers;
+
         [InitializeOnLoadMethod]
         private static void Init()
         {
@@ -99,13 +103,31 @@ namespace Burk
             return properties;
         }
 
+        public static BufferContainer[] GetBuffers()
+        {
+            string[] containerGUIDs = AssetDatabase.FindAssets("t:BufferContainer");
+            BufferContainer[] containers = new BufferContainer[containerGUIDs.Length];
+            for (int i = 0; i < containerGUIDs.Length; i++)
+            {
+                containers[i] = AssetDatabase.LoadAssetAtPath<BufferContainer>(AssetDatabase.GUIDToAssetPath(containerGUIDs[i]));
+            }
+            _buffers = containers;
+            return containers;
+        }
+
+        public static BufferContainer GetBufferByIndex(int index)
+        {
+            if (_buffers.Length <= index) return null;
+            return _buffers[index];
+        }
+
         public static string[] GetControlSetNames()
         {
             string[] names = new string[_controlSets.Count];
             int i = 0;
             foreach (KeyValuePair<int, ControlSet> controlSet in _controlSets)
             {
-                names[i] = controlSet.Value.name;
+                names[i] = controlSet.Value.Name;
                 i++;
             }
             return names;
@@ -113,12 +135,25 @@ namespace Burk
 
         public static ControlSet GetControlSetByNameOrder(int nameOrder)
         {
+            if (_controlSets == null) Init();
+            if (_controlSets.Count <= nameOrder) return null;
             return _controlSets.Values.ToList()[nameOrder];
         }
 
         public static void SetActiveBuffer(BufferContainer buffer)
         {
             _activeBuffer = buffer;
+        }
+
+        internal static string[] GetBufferNames()
+        {
+            if (_buffers == null) GetBuffers();
+            string[] names = new string[_buffers.Length];
+            for (int i = 0; i < names.Length; i++)
+            {
+                names[i] = _buffers[i].name;
+            }
+            return names;
         }
     }
 }

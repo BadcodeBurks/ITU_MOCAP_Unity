@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Burk
 {
-    [ExecuteAlways]
+    // [ExecuteAlways]
     public class DemoBufferManager : MonoBehaviour
     {
         [SerializeField] SensorUIController sensorUIController;

@@ -1,4 +1,5 @@
 using System;
+using PlasticGui;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
@@ -22,6 +23,8 @@ namespace Burk
         private double recordPlayTime;
         public Action OnPlayFinished;
         private int _lastPlayedIndex;
+        bool _settingPlayTime;
+        public bool SettingPlayTime => _settingPlayTime;
         private double _nextClosestTime;
         #endregion
 
@@ -34,10 +37,18 @@ namespace Burk
         {
             if (_isRecordSet) UnsetRecord();
             if (r.GetDuration() <= .02d) return;
-            _buffer = BufferContainer.Create(ControlsManager.ActiveBuffer.GetMetadata()); //TODO: use r.GetMetadata();
+            _buffer = BufferContainer.Create(r.BufferData); //TODO: use r.GetMetadata();
             _buffer.name = "BufferRecordPlayer";
+            _buffer.Init();
             _bufferRecording = r;
             _isRecordSet = true;
+        }
+
+        public string GetRecordName()
+        {
+            if (!_isRecordSet) return "No record is set";
+            if (_bufferRecording.Name == null || _bufferRecording.Name == "") return "Latest Captured";
+            return _bufferRecording.Name;
         }
 
         public void UnsetRecord()
@@ -52,6 +63,8 @@ namespace Burk
             if (!_isRecordSet) return;
             if (!_isPlaying) return;
 
+            if (_settingPlayTime) return;
+
             recordPlayTime += EditorTime.DeltaTime;
             if (recordPlayTime >= _nextClosestTime)
             {
@@ -65,15 +78,26 @@ namespace Burk
             }
         }
 
-        public void StartPlaying()
+        private void BindToBuffer()
         {
-            if (IsPlaying) return;
             if (_controlToBind.IsBound)
             {
                 _wasBoundToActiveBuffer = _controlToBind.IsBound;
                 _controlToBind.UnbindControls(true);
             }
             _controlToBind.BindControls(_buffer);
+        }
+
+        private void UnbindFromBuffer()
+        {
+            _controlToBind.UnbindControls(true);
+            if (_wasBoundToActiveBuffer) _controlToBind.BindControls(ControlsManager.ActiveBuffer);
+        }
+
+        public void StartPlaying()
+        {
+            if (IsPlaying) return;
+            BindToBuffer();
             _lastPlayedIndex = 0;
             _isPlaying = true;
             recordPlayTime = 0;
@@ -85,9 +109,37 @@ namespace Burk
         {
             _isPlaying = false;
             recordPlayTime = 0d;
-            _controlToBind.UnbindControls(true);
-            if (_wasBoundToActiveBuffer) _controlToBind.BindControls(ControlsManager.ActiveBuffer);
+            UnbindFromBuffer();
             OnPlayFinished?.Invoke();
+        }
+
+        public float GetNormalizedPlayTime()
+        {
+            if (_bufferRecording == null) return 0;
+            if (_bufferRecording.GetDuration() == 0) return 0;
+            float t = (float)(recordPlayTime / _bufferRecording.GetDuration());
+            return t;
+        }
+
+        public void StartSetPlayTime()
+        {
+            if (_settingPlayTime) return;
+            _settingPlayTime = true;
+            if (!_isPlaying) BindToBuffer();
+        }
+
+        public void SetPlayTime(float nT)
+        {
+            recordPlayTime = _bufferRecording.GetDuration() * nT;
+            _lastPlayedIndex = _bufferRecording.GetClosestTimeIndex(recordPlayTime);
+            if (!_isPlaying) _buffer.WriteFullBuffer(_bufferRecording.GetValues(_lastPlayedIndex));
+        }
+
+        public void StopSetPlayTime()
+        {
+            if (!_settingPlayTime) return;
+            _settingPlayTime = false;
+            if (!_isPlaying) UnbindFromBuffer();
         }
 
         public double StretchSlider(float sliderValue)
@@ -104,7 +156,16 @@ namespace Burk
         internal void SetControl(ControlSet controlSet)
         {
             if (_isPlaying) return;
+            if (controlSet == null) return;
+            Debug.Log("SetControl " + controlSet.Name);
             _controlToBind = controlSet;
+        }
+
+        internal void SetNormalizedPlayTime(float temp)
+        {
+            if (!_isRecordSet) return;
+            if (!_settingPlayTime) StartSetPlayTime();
+            SetPlayTime(temp);
         }
     }
 }

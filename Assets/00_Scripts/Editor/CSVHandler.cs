@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.IO;
 using System.Linq;
 using UnityEditor;
@@ -80,11 +81,29 @@ namespace Burk
             TextAsset file = AssetDatabase.LoadAssetAtPath<TextAsset>(path);
             if (file == null) return null;
             BufferRecording recording = new BufferRecording(file.name);
+            BufferMetadata meta = new BufferMetadata();
             string csvData = file.text;
             string[] rows = csvData.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
-
-            foreach (string row in rows)
+            Debug.Log("reading: " + file.name);
+            int recordStartRow = 3;
+            int[] counts = rows[0].Split(',').Select(x => int.Parse(x)).ToArray();
+            meta.tensionCount = counts[0];
+            meta.imuCount = counts[1];
+            meta.keys = rows[1].Split(',').ToList();
+            meta.useRaw = bool.Parse(rows[2]);
+            if (meta.useRaw)
             {
+                recordStartRow = 4;
+                meta.tensionCalibrations = new List<Vector2>();
+                float[] calibrations = rows[3].Split(',').Select(x => float.Parse(x)).ToArray();
+                for (int i = 0; i < meta.tensionCount; i++)
+                {
+                    meta.tensionCalibrations.Add(new Vector2(calibrations[i * 2], calibrations[i * 2 + 1]));
+                }
+            }
+            for (int j = recordStartRow; j < rows.Length; j++)
+            {
+                string row = rows[j];
                 // Split each row by commas
                 string[] values = row.Split(',');
 
@@ -102,6 +121,7 @@ namespace Burk
                     recording.AddRecordFrame(bufferValues, timestamp);
                 }
             }
+            recording.AddBufferData(meta);
             return recording;
         }
 
@@ -120,6 +140,24 @@ namespace Burk
         private static string GetRecordingString(BufferRecording recording)
         {
             string csvData = "";
+            csvData += recording.BufferData.tensionCount + "," + recording.BufferData.imuCount + "\n";
+            for (int i = 0; i < recording.BufferData.keys.Count; i++)
+            {
+                csvData += recording.BufferData.keys[i];
+                if (i < recording.BufferData.keys.Count - 1) csvData += ",";
+            }
+            csvData += "\n";
+            csvData += recording.BufferData.useRaw;
+            csvData += "\n";
+            if (recording.BufferData.useRaw)
+            {
+                for (int i = 0; i < recording.BufferData.tensionCalibrations.Count; i++)
+                {
+                    csvData += recording.BufferData.tensionCalibrations[i].x + "," + recording.BufferData.tensionCalibrations[i].y;
+                    if (i < recording.BufferData.tensionCalibrations.Count - 1) csvData += ",";
+                }
+                csvData += "\n";
+            }
             for (int i = 0; i < recording.GetFrameCount(); i++)
             {
                 csvData += recording.GetTimeStamp(i);

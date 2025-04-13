@@ -36,18 +36,29 @@ namespace Burk
         BufferRecorder _recorder;
         BufferRecordPlayer _player;
 
+        string[] _bufferNames;
         string[] _controlSetNames;
-        int _selectedControlIndex = 0;
+        int _selectedBufferIndex = -1;
+        int _selectedControlIndex = -1;
 
         void OnEnable()
         {
+            Initialize();
+        }
+
+        void Initialize()
+        {
             _bufferRecords = new List<BufferRecordWrapper>();
+            _bufferNames = ControlsManager.GetBufferNames();
+
             _recorder = new BufferRecorder();
             _recorder.Init();
             _recorder.OnRecorded += OnNewRecordingCaptured;
             _player = new BufferRecordPlayer();
             _player.Init();
+            _player.SetControl(ControlsManager.GetControlSetByNameOrder(0));
             _controlSetNames = ControlsManager.GetControlSetNames();
+            ControlsManager.OnControlSetListChanged += OnControlSetListChanged;
         }
 
         void OnControlSetListChanged()
@@ -64,23 +75,59 @@ namespace Burk
 
         void OnGUI()
         {
-            GUI.enabled = ControlsManager.ActiveBuffer != null;
             //TODO: Draw Settings:
-            using (new EditorGUILayout.HorizontalScope(EditorStyles.toolbar))
+            using (new EditorGUILayout.VerticalScope(EditorStyles.helpBox))
             {
+                GUILayout.BeginHorizontal();
                 int temp = EditorGUILayout.Popup("Control Set", _selectedControlIndex, _controlSetNames);
                 if (temp != _selectedControlIndex)
                 {
                     _selectedControlIndex = temp;
                     _player.SetControl(ControlsManager.GetControlSetByNameOrder(_selectedControlIndex));
                 }
+                GUILayout.EndHorizontal();
+                GUILayout.BeginHorizontal();
+                int temp2 = EditorGUILayout.Popup("Buffer", _selectedBufferIndex, _bufferNames);
+                if (temp2 != _selectedBufferIndex)
+                {
+                    _selectedBufferIndex = temp2;
+                    _recorder.SetBuffer(ControlsManager.GetBufferByIndex(_selectedBufferIndex));
+                }
+                GUILayout.EndHorizontal();
             }
 
-            //TODO: Draw Record List
-            //if there are no recordings draw accordingly
-            //if there are recordings:
-            // Draw name, duration and play button
-            //disable while recording
+            GUI.enabled = true;
+            GUILayout.Label("Recordings", EditorStyles.centeredGreyMiniLabel);
+            using (new EditorGUILayout.VerticalScope(EditorStyles.helpBox))
+            {
+                if (_player.IsPlaying || _recorder.IsRecording) GUI.enabled = false;
+                foreach (string recordName in RecordsHandler.RecordNames)
+                {
+                    if (GUILayout.Button(recordName, EditorStyles.miniButton))
+                    {
+                        _player.SetRecord(RecordsHandler.GetRecording(recordName));
+                    }
+                }
+                GUILayout.FlexibleSpace();
+                Color guiTemp = GUI.color;
+                GUI.color = Color.green;
+                GUI.enabled = true;
+                if (GUILayout.Button("Extract All As CSV"))
+                {
+                    RecordsHandler.ExtractAllRecords();
+                }
+                GUI.color = guiTemp;
+            }
+
+            //===== RECORDER =====
+
+            using (new EditorGUILayout.VerticalScope(EditorStyles.helpBox, GUILayout.Height(100f)))
+            {
+                GUILayout.Label("Record: " + _player.GetRecordName(), GUILayout.Height(20f));
+                float temp = GUILayout.HorizontalSlider(_player.GetNormalizedPlayTime(), 0, 1);
+                if (Mathf.Abs(temp - _player.GetNormalizedPlayTime()) > 0.01f) _player.SetNormalizedPlayTime(temp);
+                else if (_player.SettingPlayTime) _player.StopSetPlayTime();
+            }
 
             //TODO: Draw Recorder:
             //specify which buffer is being recorded (Active buffer name)
