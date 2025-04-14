@@ -25,8 +25,6 @@ namespace Burk
         public void AddBufferData(BufferMetadata data) => _bufferData = data;
         public void AddRecordFrame(float[] bufferValues, double timeStamp)
         {
-            Debug.Log("timestamp: " + timeStamp);
-
             _timeStamps.Add(timeStamp);
             _bufferValues.Add(bufferValues.Clone() as float[]);
         }

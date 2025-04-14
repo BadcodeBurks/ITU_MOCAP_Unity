@@ -58,10 +58,10 @@ namespace Burk
             return metadata.Clone();
         }
 
-        private void OnEnable()
-        {
-            _isInitialized = false;
-        }
+        // private void OnEnable()
+        // {
+        //     _isInitialized = false;
+        // }
         public virtual void Init()
         {
             _isInitialized = true;

@@ -12,8 +12,10 @@ namespace Burk
         public BufferContainer Buffer => _buffer;
         BufferRecording _bufferRecording;
         bool _isRecordSet;
+        public bool IsRecordSet => _isRecordSet;
 
         ControlSet _controlToBind;
+        public bool IsControlSet => _controlToBind != null;
         bool _wasBoundToActiveBuffer;
         public bool CanPlay => _isRecordSet && _buffer.IsInitialized && _controlToBind != null && !IsPlaying;
 
@@ -41,6 +43,8 @@ namespace Burk
             _buffer.name = "BufferRecordPlayer";
             _buffer.Init();
             _bufferRecording = r;
+            recordPlayTime = 0;
+            _lastPlayedIndex = -1;
             _isRecordSet = true;
         }
 
@@ -71,7 +75,7 @@ namespace Burk
                 _lastPlayedIndex++;
                 _buffer.WriteFullBuffer(_bufferRecording.GetValues(_lastPlayedIndex));
                 _nextClosestTime = _bufferRecording.GetNextClosestTime(_lastPlayedIndex);
-                if (_nextClosestTime <= recordPlayTime)
+                if (recordPlayTime > _bufferRecording.GetDuration())
                 {
                     StopPlaying();
                 }
@@ -125,6 +129,7 @@ namespace Burk
         {
             if (_settingPlayTime) return;
             _settingPlayTime = true;
+            Debug.Log("StartSetPlayTime");
             if (!_isPlaying) BindToBuffer();
         }
 
@@ -138,6 +143,7 @@ namespace Burk
         public void StopSetPlayTime()
         {
             if (!_settingPlayTime) return;
+            Debug.Log("StopSetPlayTime");
             _settingPlayTime = false;
             if (!_isPlaying) UnbindFromBuffer();
         }
@@ -166,6 +172,14 @@ namespace Burk
             if (!_isRecordSet) return;
             if (!_settingPlayTime) StartSetPlayTime();
             SetPlayTime(temp);
+        }
+
+        internal void OnFrameUpdate()
+        {
+            if (!_isRecordSet) return;
+            if (!_isPlaying) return;
+            OnUpdate();
+            _controlToBind.Update();
         }
     }
 }

@@ -84,7 +84,7 @@ namespace Burk
             BufferMetadata meta = new BufferMetadata();
             string csvData = file.text;
             string[] rows = csvData.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
-            Debug.Log("reading: " + file.name);
+
             int recordStartRow = 3;
             int[] counts = rows[0].Split(',').Select(x => int.Parse(x)).ToArray();
             meta.tensionCount = counts[0];
@@ -182,7 +182,7 @@ namespace Burk
 
         public static bool CheckFileExists(string fileName)
         {
-            string filePath = Path.Combine(folderPath, fileName + ".csv");
+            string filePath = Path.Combine(folderPath, fileName + ".asset");
             return AssetDatabase.LoadAssetAtPath<TextAsset>(filePath) != null;
         }
 

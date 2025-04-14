@@ -44,6 +44,7 @@ namespace Burk
             private void OnBufferInitialized()
             {
                 isInitializing = false;
+                Debug.Log("Initialized: " + container.name);
                 OnBufferWrapperInitialized?.Invoke(this);
             }
         }

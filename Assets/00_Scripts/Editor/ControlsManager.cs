@@ -110,6 +110,7 @@ namespace Burk
             for (int i = 0; i < containerGUIDs.Length; i++)
             {
                 containers[i] = AssetDatabase.LoadAssetAtPath<BufferContainer>(AssetDatabase.GUIDToAssetPath(containerGUIDs[i]));
+                containers[i].Init();
             }
             _buffers = containers;
             return containers;
