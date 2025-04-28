@@ -39,8 +39,8 @@ namespace Burk
 
         string[] _bufferNames;
         string[] _controlSetNames;
-        int _selectedBufferIndex = -1;
-        int _selectedControlIndex = -1;
+        int _selectedBufferIndex = 0;
+        int _selectedControlIndex = 0;
 
         void OnEnable()
         {
@@ -80,6 +80,7 @@ namespace Burk
         private bool _isNameValid = false;
         void OnGUI()
         {
+            if (!ControlsManager.IsInitialized) return;
             using (new EditorGUILayout.VerticalScope(EditorStyles.helpBox))
             {
                 GUILayout.BeginHorizontal();

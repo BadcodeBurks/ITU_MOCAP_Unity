@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Burk
 {
-    public class HandRigController : MonoBehaviour
+    public class HandRigDebug : MonoBehaviour
     {
         [SerializeField] private Animator animator;
 

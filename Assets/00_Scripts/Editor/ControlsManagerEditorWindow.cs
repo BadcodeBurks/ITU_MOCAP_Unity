@@ -198,28 +198,7 @@ namespace Burk
                 }
                 GUILayout.FlexibleSpace();
             }
-            // GUILayout.Label("Recordings", EditorStyles.centeredGreyMiniLabel);
-            // using (new EditorGUILayout.VerticalScope(EditorStyles.helpBox))
-            // {
-            //     foreach (string recordName in RecordsHandler.RecordNames)
-            //     {
-            //         if (GUILayout.Button(recordName, EditorStyles.miniButton))
-            //         {
-            //             _player.SetRecord(RecordsHandler.GetRecording(recordName));
-            //         }
-            //     }
-            //     Color guiTemp = GUI.color;
-            //     GUI.color = Color.green;
-            //     if (GUILayout.Button("Extract As CSV"))
-            //     {
-            //         RecordsHandler.ExtractAllRecords();
-            //     }
-            //     GUI.color = guiTemp;
-            // }
             GUI.enabled = true;
-
-            DrawRecorder();
-            DrawPlayer();
 
             if (GUILayout.Button("Refresh"))
             {

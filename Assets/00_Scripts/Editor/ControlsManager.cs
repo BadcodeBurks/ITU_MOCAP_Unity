@@ -19,7 +19,8 @@ namespace Burk
         private static BufferContainer[] _buffers;
 
         public static BufferContainer[] Buffers => _buffers;
-
+        static bool _isInitialized = false;
+        public static bool IsInitialized => _isInitialized;
         [InitializeOnLoadMethod]
         private static void Init()
         {
@@ -27,6 +28,8 @@ namespace Burk
             ControlSet.OnControlSetValidated += OnControlSetValidated;
             EditorApplication.hierarchyChanged += OnHierarchyChange;
             EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
+            _isInitialized = true;
+
         }
 
         private static void OnPlayModeStateChanged(PlayModeStateChange state)
@@ -155,6 +158,7 @@ namespace Burk
                 names[i] = _buffers[i].name;
             }
             return names;
+
         }
     }
 }

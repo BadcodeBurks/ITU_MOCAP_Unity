@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!49 &4900000
+TextAsset:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 1
+  m_Script: '5,1
+
+    T,I,M,R,P,B
+
+    False
+
+    9.9999965641473E-08,113,359,371,240,218,-26.44,-22.56,174.38
+
+    6.65191529999993,116,359,372,240,219,-26.37,-19.19,171.63
+
+'

@@ -116,13 +116,14 @@ namespace Burk
                 while (!aw.IsCompleted) yield return Wait();
                 if (bytesRead != buffer.Length) continue;
                 Buffer.BlockCopy(buffer, 0, m_Buffer, 0, bytesRead);
+                OnBufferWrite?.Invoke();
             }
             IEnumerator Wait()
             {
                 if (Application.isPlaying) yield return new WaitForEndOfFrame();
 #if UNITY_EDITOR
 
-                else yield return new EditorWaitForSeconds(0.01f);
+                else yield return new EditorWaitForSeconds(0.1f);
 #endif
             }
         }

@@ -19,6 +19,7 @@ namespace Burk
             clone.imuCount = imuCount;
             clone.useRaw = useRaw;
             clone.tensionCalibrations = new List<Vector2>(tensionCalibrations);
+            Debug.Log("Clone: " + clone.tensionCalibrations.Count);
             return clone;
         }
     }

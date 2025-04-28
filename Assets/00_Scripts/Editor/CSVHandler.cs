@@ -91,15 +91,13 @@ namespace Burk
             meta.imuCount = counts[1];
             meta.keys = rows[1].Split(',').ToList();
             meta.useRaw = bool.Parse(rows[2]);
-            if (meta.useRaw)
+            recordStartRow = 4;
+            meta.tensionCalibrations = new List<Vector2>();
+            float[] calibrations = rows[3].Split(',').Select(x => float.Parse(x)).ToArray();
+            for (int i = 0; i < meta.tensionCount; i++)
             {
-                recordStartRow = 4;
-                meta.tensionCalibrations = new List<Vector2>();
-                float[] calibrations = rows[3].Split(',').Select(x => float.Parse(x)).ToArray();
-                for (int i = 0; i < meta.tensionCount; i++)
-                {
-                    meta.tensionCalibrations.Add(new Vector2(calibrations[i * 2], calibrations[i * 2 + 1]));
-                }
+                meta.tensionCalibrations.Add(new Vector2(calibrations[i * 2], calibrations[i * 2 + 1]));
+                Debug.Log(file.name + " Calibration: " + calibrations[i * 2] + ", " + calibrations[i * 2 + 1]);
             }
             for (int j = recordStartRow; j < rows.Length; j++)
             {
@@ -149,15 +147,12 @@ namespace Burk
             csvData += "\n";
             csvData += recording.BufferData.useRaw;
             csvData += "\n";
-            if (recording.BufferData.useRaw)
+            for (int i = 0; i < recording.BufferData.tensionCalibrations.Count; i++)
             {
-                for (int i = 0; i < recording.BufferData.tensionCalibrations.Count; i++)
-                {
-                    csvData += recording.BufferData.tensionCalibrations[i].x + "," + recording.BufferData.tensionCalibrations[i].y;
-                    if (i < recording.BufferData.tensionCalibrations.Count - 1) csvData += ",";
-                }
-                csvData += "\n";
+                csvData += recording.BufferData.tensionCalibrations[i].x + "," + recording.BufferData.tensionCalibrations[i].y;
+                if (i < recording.BufferData.tensionCalibrations.Count - 1) csvData += ",";
             }
+            csvData += "\n";
             for (int i = 0; i < recording.GetFrameCount(); i++)
             {
                 csvData += recording.GetTimeStamp(i);
