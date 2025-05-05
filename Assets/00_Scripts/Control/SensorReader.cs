@@ -10,7 +10,7 @@ namespace Burk
         public int BufferIndex => _bufferIndex;
         private BufferContainer.BufferReader _bufferReader;
         private Vector2 _valueRange;
-        private const float inputDeadzone = 1.2f;
+        private const float inputDeadzone = 1f;
 
         public TensionSensorReader(BufferContainer.BufferReader reader, int bufferIndex, bool useRaw = false)
         {
@@ -23,7 +23,7 @@ namespace Burk
         {
             float value = _bufferReader.ReadFloat(_bufferIndex);
             if (_useRaw) return value;
-            //value = ApplyDeadzone(value);
+            value = ApplyDeadzone(value);
             ConfigureMapping(value);
             value = (value - _valueRange.x) / (_valueRange.y - _valueRange.x);
             return value;

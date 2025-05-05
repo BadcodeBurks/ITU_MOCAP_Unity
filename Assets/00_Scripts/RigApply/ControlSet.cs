@@ -95,6 +95,7 @@ namespace Burk
 
         public void Update()
         {
+            Debug.Log("Updating");
             if (!_isBound) return;
             for (int i = 0; i < _bindings.Count; i++)
             {

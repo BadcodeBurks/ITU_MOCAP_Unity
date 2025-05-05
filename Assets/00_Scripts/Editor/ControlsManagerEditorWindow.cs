@@ -205,7 +205,7 @@ namespace Burk
                 UnbindAll();
                 GetControls();
                 GetBufferWrappers();
-                RecordsHandler.LoadAllRecords();
+                //RecordsHandler.LoadAllRecords();
             }
         }
 

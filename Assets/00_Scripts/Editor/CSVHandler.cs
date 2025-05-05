@@ -91,13 +91,16 @@ namespace Burk
             meta.imuCount = counts[1];
             meta.keys = rows[1].Split(',').ToList();
             meta.useRaw = bool.Parse(rows[2]);
-            recordStartRow = 4;
-            meta.tensionCalibrations = new List<Vector2>();
-            float[] calibrations = rows[3].Split(',').Select(x => float.Parse(x)).ToArray();
-            for (int i = 0; i < meta.tensionCount; i++)
+            if (meta.useRaw)
             {
-                meta.tensionCalibrations.Add(new Vector2(calibrations[i * 2], calibrations[i * 2 + 1]));
-                Debug.Log(file.name + " Calibration: " + calibrations[i * 2] + ", " + calibrations[i * 2 + 1]);
+                recordStartRow = 4;
+                meta.tensionCalibrations = new List<Vector2>();
+                float[] calibrations = rows[3].Split(',').Select(x => float.Parse(x)).ToArray();
+                for (int i = 0; i < meta.tensionCount; i++)
+                {
+                    meta.tensionCalibrations.Add(new Vector2(calibrations[i * 2], calibrations[i * 2 + 1]));
+                    //Debug.Log(file.name + " Calibration: " + calibrations[i * 2] + ", " + calibrations[i * 2 + 1]);
+                }
             }
             for (int j = recordStartRow; j < rows.Length; j++)
             {

@@ -66,7 +66,7 @@ namespace Burk
         {
 
             if (!useRaw) value = GetTemporalAverage(value);
-            value = _lutCurve.Evaluate(value);
+            value = _lutCurve.Evaluate(Mathf.Clamp01(value));
             _animator.SetFloat(_parameterHash, value);
         }
         int movingAverageLength = 0;

@@ -42,7 +42,7 @@ namespace Burk
             b.Init();
             return b;
         }
-        protected bool _isInitialized = false;
+        [NonSerialized] protected bool _isInitialized = false;
         public bool IsInitialized => _isInitialized;
         protected BufferReader _reader;
         protected Dictionary<string, TensionSensorReader> _tensionReaderCache;
