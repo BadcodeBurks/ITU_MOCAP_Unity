@@ -205,7 +205,7 @@ namespace Burk
                 UnbindAll();
                 GetControls();
                 GetBufferWrappers();
-                //RecordsHandler.LoadAllRecords();
+                RecordsHandler.LoadAllRecords();
             }
         }
 
@@ -348,7 +348,7 @@ namespace Burk
                     GUI.enabled = ControlsManager.ActiveBuffer != null;
                     if (GUILayout.Button("Bind"))
                     {
-                        controlSet.BindControls(ControlsManager.ActiveBuffer, ControlsManager.ActiveBuffer is PipeBufferContainer);
+                        controlSet.BindControls(ControlsManager.ActiveBuffer);
                         SceneView.lastActiveSceneView.sceneViewState.alwaysRefresh = true;
 
                     }
@@ -367,8 +367,13 @@ namespace Burk
             for (int i = 0; i < _cachedEditors.Count; i++)
             {
                 ControlSet control = _cachedEditors[i].cachedEditor.target as ControlSet;
-                if (control != null && control.IsBound) control.Update();
+                if (control != null && control.IsBound)
+                {
+
+                    control.Update();
+                }
             }
+
             if (!update) return;
             SceneView.RepaintAll();
             Repaint();

@@ -74,8 +74,8 @@ namespace Burk
             transform.rotation = Quaternion.Euler(val) * rotation;
         }
 
-        public override void ResetCalibration()
-        {
-        }
+        // public override void ResetCalibration()
+        // {
+        // }
     }
 }

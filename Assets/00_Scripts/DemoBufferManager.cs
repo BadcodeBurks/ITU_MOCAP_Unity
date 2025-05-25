@@ -43,7 +43,6 @@ namespace Burk
             pipeBufferContainer.OnBufferInitialized += () =>
             {
                 controlSet.Init(pipeBufferContainer);
-                controlSet.CalibrateControls(calibrationDuration);
             };
             pipeBufferContainer.CreateClient();
         }
@@ -63,8 +62,7 @@ namespace Burk
 
         public void CalibrateControls(float calibrationDuration)
         {
-            this.calibrationDuration = calibrationDuration;
-            controlSet.CalibrateControls(calibrationDuration);
+            //Do something to reset calibration
         }
     }
 }

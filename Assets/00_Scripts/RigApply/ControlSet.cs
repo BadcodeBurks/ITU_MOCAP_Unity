@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,7 +7,6 @@ namespace Burk
     /// <summary>
     /// ControlSet
     /// </summary>
-    [ExecuteAlways]
     public class ControlSet : MonoBehaviour
     {
         public static Action<ControlSet> OnControlSetValidated;
@@ -53,19 +51,16 @@ namespace Burk
             }
         }
 
-        public void BindControls(BufferContainer buffer, bool calibrate = false)
+        public void BindControls(BufferContainer buffer)
         {
             for (int i = 0; i < _bindings.Count; i++)
             {
-                _controlList[i].value.ResetCalibration();
+                //_controlList[i].value.ResetCalibration();
                 _bindings[i].Bind(buffer);
             }
             Debug.Log($"{name} is Bound to " + buffer.name);
             _isBound = true;
-            if (calibrate)
-            {
-                CalibrateControls(5f);
-            }
+            animator.StartPlayback();
         }
 
         public void UnbindControls(bool resetPositions = false)
@@ -102,32 +97,11 @@ namespace Burk
                 _bindings[i].Update();
             }
 #if UNITY_EDITOR
-            //Debug.Log("EditorTime.DeltaTime: " + EditorTime.DeltaTime);
-            if (!Application.isPlaying) animator.Update(EditorTime.DeltaTime);
+            if (!Application.isPlaying)
+            {
+                animator.Update(EditorTime.DeltaTime);
+            }
 #endif
-        }
-
-        public void CalibrateControls(float calibrationDuration)
-        {
-            if (_isCalibrating) return;
-            StartCoroutine(Calibrate(calibrationDuration));
-        }
-
-        private IEnumerator Calibrate(float calibrationDuration)
-        {
-            Debug.Log("Calibrating");
-            _isCalibrating = true;
-            for (int i = 0; i < _bindings.Count; i++)
-            {
-                _controlList[i].value.StartCalibration();
-            }
-            yield return new WaitForSeconds(calibrationDuration);
-            for (int i = 0; i < _bindings.Count; i++)
-            {
-                _controlList[i].value.EndCalibration();
-            }
-            _isCalibrating = false;
-            Debug.Log("Stopped calibration");
         }
     }
 }

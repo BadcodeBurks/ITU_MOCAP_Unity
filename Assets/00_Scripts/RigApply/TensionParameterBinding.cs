@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Burk
@@ -17,6 +16,7 @@ namespace Burk
         {
             //Debug.Log("binding " + _paramControl.Key + " to " + buffer.name);
             _reader = buffer.GetTensionReader(readerKey);
+            _paramControl.Reset();
             _isBound = true;
         }
 
@@ -55,6 +55,7 @@ namespace Burk
         {
             if (!animator.TryGetNameHash(parameterName, out _parameterHash)) return;
             _animator = animator;
+            _animator.SetFloat(_parameterHash, 0);
         }
 
         public override SensorBinding CreateBinding(string readerKey)
@@ -66,23 +67,19 @@ namespace Burk
         {
 
             if (!useRaw) value = GetTemporalAverage(value);
-            value = _lutCurve.Evaluate(Mathf.Clamp01(value));
-            _animator.SetFloat(_parameterHash, value);
+            //value = _lutCurve.Evaluate(value);
+            _animator.SetFloat(_parameterHash, Mathf.Clamp01(value));
         }
-        int movingAverageLength = 0;
         float movingAverage = 0f;
         private float GetTemporalAverage(float value)
         {
-            movingAverage += value / Mathf.Max(movingAverageLength, 1f);
-            if (movingAverageLength < 10)
-            {
-                movingAverageLength++;
-            }
-            else
-            {
-                movingAverage -= movingAverage / movingAverageLength;
-            }
+            movingAverage = Mathf.Lerp(movingAverage, value, 0.2f);
             return movingAverage;
+        }
+
+        internal void Reset()
+        {
+            movingAverage = 0f;
         }
     }
 }

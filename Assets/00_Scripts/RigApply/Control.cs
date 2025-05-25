@@ -22,20 +22,5 @@ namespace Burk
 
         public virtual SensorBinding CreateBinding(string readerKey) { return null; }
 
-        public virtual void StartCalibration()
-        {
-            ResetCalibration();
-            _isCalibrating = true;
-        }
-
-        public virtual void ResetCalibration()
-        {
-            _valueRange = new Vector2(0f, 0f);
-        }
-
-        public virtual void EndCalibration()
-        {
-            _isCalibrating = false;
-        }
     }
 }
