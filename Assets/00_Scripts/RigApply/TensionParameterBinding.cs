@@ -8,6 +8,7 @@ namespace Burk
         public TensionParameterControlBinding(string readerKey, ParameterControl parameterControl) : base(readerKey)
         {
             _paramControl = parameterControl;
+            this.readerKey = readerKey;
         }
         private ParameterControl _paramControl;
         private TensionSensorReader _reader;

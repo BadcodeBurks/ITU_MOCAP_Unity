@@ -181,9 +181,9 @@ namespace Burk
                 if (Mathf.Abs(temp - normPlayTime) > 0.01f)
                 {
                     if (!_player.IsControlSet) _player.SetControl(ControlsManager.GetControlSetByNameOrder(_selectedControlIndex));
+                    if (_player.IsPlaying) _player.StopPlaying();
                     _player.SetNormalizedPlayTime(temp);
                 }
-                else if (_player.SettingPlayTime) _player.StopSetPlayTime();
 
                 using (new EditorGUILayout.HorizontalScope(GUILayout.Height(20f)))
                 {

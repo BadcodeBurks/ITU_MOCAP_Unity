@@ -314,6 +314,7 @@ namespace Burk
                 DrawTitle(control);
                 if (control.isExpanded)
                 {
+                    GUI.enabled = !(control.cachedEditor.target as ControlSet).IsBound;
                     EditorGUILayout.BeginHorizontal();
                     EditorGUILayout.Space();
                     using (var scope = new EditorGUILayout.ScrollViewScope(control.scrollPosition, GUILayout.Width(EditorGUIUtility.currentViewWidth - 20)))
@@ -322,6 +323,7 @@ namespace Burk
                         control.cachedEditor.OnInspectorGUI();
                     }
                     EditorGUILayout.EndHorizontal();
+                    GUI.enabled = true;
                 }
             }
         }

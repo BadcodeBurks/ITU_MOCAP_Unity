@@ -87,6 +87,7 @@ namespace Burk
                 _wasBoundToActiveBuffer = _controlToBind.IsBound;
                 _controlToBind.UnbindControls(true);
             }
+            Debug.Log("[Player] Binding to " + _buffer.name);
             _controlToBind.BindControls(_buffer);
         }
 
@@ -99,6 +100,7 @@ namespace Burk
         public void StartPlaying()
         {
             if (IsPlaying) return;
+            if (SettingPlayTime) StopSetPlayTime();
             BindToBuffer();
             _lastPlayedIndex = 0;
             _isPlaying = true;
@@ -109,6 +111,7 @@ namespace Burk
 
         public void StopPlaying()
         {
+            if (!IsPlaying) return;
             _isPlaying = false;
             recordPlayTime = 0d;
             UnbindFromBuffer();
@@ -160,6 +163,7 @@ namespace Burk
         internal void SetControl(ControlSet controlSet)
         {
             if (_isPlaying) return;
+            if (SettingPlayTime) StopSetPlayTime();
             if (controlSet == null) return;
             Debug.Log("SetControl " + controlSet.Name);
             _controlToBind = controlSet;
