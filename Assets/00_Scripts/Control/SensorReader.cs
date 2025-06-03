@@ -25,7 +25,6 @@ namespace Burk
             if (_useRaw) return value;
             value = ApplyDeadzone(value);
             ConfigureMapping(value);
-            Debug.Log("Mapping: " + _valueRange);
             value = (value - _valueRange.x) / Mathf.Max(_valueRange.y - _valueRange.x, 1f);
             return value;
         }

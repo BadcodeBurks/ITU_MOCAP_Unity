@@ -12,6 +12,7 @@ namespace Burk
         }
         private ParameterControl _paramControl;
         private TensionSensorReader _reader;
+        private float _value;
         public override SensorType GetSensorType() => SensorType.Tension;
         public override void Bind(BufferContainer buffer)
         {
@@ -19,6 +20,7 @@ namespace Burk
             _reader = buffer.GetTensionReader(readerKey);
             _paramControl.Reset();
             _isBound = true;
+            _value = 0;
         }
 
         public override void Unbind(bool reset = false)
@@ -31,8 +33,15 @@ namespace Burk
         public override void Update()
         {
             if (!_isBound) return;
-            _paramControl.Update(_reader.Read(), _reader.UseRaw);
-            //IDEA: Separate Reading and updating, for value processing.
+            _value = _reader.Read();
+        }
+
+        public float GetValue() => _value;
+        public void OverrideValue(float value) => _value = value;
+
+        public override void Apply()
+        {
+            _paramControl.Update(_value, _reader.UseRaw);
         }
     }
 

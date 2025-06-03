@@ -43,14 +43,38 @@ namespace Burk
                 }
             }
 
+            if (state == PlayModeStateChange.ExitingEditMode)
+            {
+                foreach (KeyValuePair<int, ControlSet> controlSet in _controlSets)
+                {
+                    if (controlSet.Value != null)
+                        controlSet.Value.UnbindControls(true);
+                }
+                foreach (BufferContainer buffer in _buffers)
+                {
+                    if (buffer.GetType() == typeof(PipeBufferContainer))
+                    {
+                        (buffer as PipeBufferContainer).StopClient();
+                    }
+                }
+            }
+
             if (state == PlayModeStateChange.EnteredEditMode)
             {
+                ControlsManager.Init();
                 ControlSet[] controlSets = GameObject.FindObjectsOfType<ControlSet>();
                 _controlSets = new Dictionary<int, ControlSet>();
                 foreach (ControlSet controlSet in controlSets)
                 {
                     if (controlSet.IsPrefabDefinition()) continue;
                     AddControlSet(controlSet);
+                }
+                foreach (BufferContainer buffer in _buffers)
+                {
+                    if (buffer.GetType() == typeof(PipeBufferContainer))
+                    {
+                        (buffer as PipeBufferContainer).Init();
+                    }
                 }
             }
         }

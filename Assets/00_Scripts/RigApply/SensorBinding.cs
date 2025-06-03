@@ -23,5 +23,6 @@ namespace Burk
         public abstract void Bind(BufferContainer buffer);
         public abstract void Unbind(bool reset = false);
         public abstract void Update();
+        public abstract void Apply();
     }
 }

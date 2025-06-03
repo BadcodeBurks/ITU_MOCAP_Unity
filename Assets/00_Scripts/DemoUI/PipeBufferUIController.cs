@@ -10,9 +10,11 @@ namespace Burk
     public class PipeBufferUIController : MonoBehaviour
     {
         public Action<float> OnCalibrate;
+        public Action OnReconnect;
         [SerializeField] Slider durationSlider;
         [SerializeField] TMP_Text durationText;
         [SerializeField] Button calibrateButton;
+        [SerializeField] Button reconnectButton;
         [SerializeField] AnimationCurve calibrateDurationSliderCurve;
         private float _duration = 1f;
 
@@ -36,7 +38,12 @@ namespace Burk
 
         public void OnReconnectPressed()
         {
-            StartCoroutine(CalibrateButtonDisableRoutine());
+            OnReconnect?.Invoke();
+        }
+
+        public void SetReconnectButtonActive(bool active)
+        {
+            reconnectButton.interactable = active;
         }
 
         private IEnumerator CalibrateButtonDisableRoutine()

@@ -5,7 +5,9 @@ using System.IO.Pipes;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+#if UNITY_EDITOR
 using Unity.EditorCoroutines.Editor;
+#endif
 using UnityEngine;
 
 namespace Burk
@@ -24,6 +26,7 @@ namespace Burk
         MonoBehaviour _routineMono;
         [NonSerialized] private bool _pipeInitialized = false;
         [NonSerialized] private bool _waitingPipeConnection = false;
+        public Action OnBufferFailedToInitialize;
         public void SetMono(MonoBehaviour mono)
         {
             _routineMono = mono;
@@ -93,6 +96,7 @@ namespace Burk
                 _isInitialized = false;
                 _pipeInitialized = false;
                 Debug.Log("Connection Failed: " + this.name);
+                OnBufferFailedToInitialize?.Invoke();
                 return;
             }
             _isInitialized = true;
@@ -126,6 +130,7 @@ namespace Burk
             }
             if (Application.isPlaying) _routineMono.StopCoroutine(readRoutine);
             if (pipeClient.IsConnected) pipeClient.Close();
+            _pipeInitialized = false;
         }
 
 

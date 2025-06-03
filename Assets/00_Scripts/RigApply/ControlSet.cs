@@ -28,6 +28,8 @@ namespace Burk
         [SerializeField] private List<ControlWrapper> _controlList;
 
         private List<SensorBinding> _bindings;
+        private List<TransformControl> _transformControls = new List<TransformControl>();
+        private List<ParameterControl> _parameterControls = new List<ParameterControl>();
         [SerializeField] private Animator animator;
 
         private bool _isBound = false;
@@ -67,6 +69,7 @@ namespace Burk
 
         public void UnbindControls(bool resetPositions = false)
         {
+            if (!_isBound) return;
             for (int i = 0; i < _bindings.Count; i++)
             {
                 _bindings[i].Unbind(resetPositions);
@@ -84,11 +87,13 @@ namespace Burk
             {
                 ParameterControl controlP = control as ParameterControl;
                 controlP.SetAnimator(ref animator);
+                _parameterControls.Add(controlP);
             }
             else if (control.ControlType == ControlType.Transform)
             {
                 TransformControl controlT = control as TransformControl;
                 controlT.Init();
+                _transformControls.Add(controlT);
             }
             return control.CreateBinding(readerKey);
         }
@@ -100,12 +105,27 @@ namespace Burk
             {
                 _bindings[i].Update();
             }
+
+            for (int i = 0; i < _bindings.Count; i++)
+            {
+                _bindings[i].Apply();
+            }
+
 #if UNITY_EDITOR
             if (!Application.isPlaying)
             {
                 if (_usesAnimator) animator.Update(EditorTime.DeltaTime);
             }
 #endif
+        }
+
+        public void SetForward(Vector3 forward)
+        {
+            if (!_isBound) return;
+            for (int i = 0; i < _transformControls.Count; i++)
+            {
+                _transformControls[i].SetForward(forward, Vector3.up);
+            }
         }
     }
 }
