@@ -136,9 +136,6 @@ namespace Burk
 
         public override IEnumerator ReadFromPipe()
         {
-#if UNITY_EDITOR
-            float t = 0f;
-#endif
             Debug.Log("Pipe Read Start: " + pipeClient.IsConnected);
             if (!pipeClient.IsConnected) yield break;
             while (true)
