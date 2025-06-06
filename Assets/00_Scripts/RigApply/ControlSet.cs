@@ -34,9 +34,8 @@ namespace Burk
 
         private bool _isBound = false;
         public bool IsBound => _isBound;
-        private bool _isCalibrating;
         private bool _usesAnimator;
-
+        ParameterFeatureExtractor _paramFeatureExtractor;
 
         public void Init(BufferContainer buffer)
         {
@@ -53,6 +52,8 @@ namespace Burk
                 _usesAnimator = _usesAnimator || _controlList[i].value.GetType() == typeof(ParameterControl);
                 _bindings.Add(CreateBinding(_controlList[i].value, _controlList[i].key));
             }
+
+            _paramFeatureExtractor = new ParameterFeatureExtractor(_parameterControls);
         }
 
         public void BindControls(BufferContainer buffer)
@@ -105,11 +106,12 @@ namespace Burk
             {
                 _bindings[i].Update();
             }
-
             for (int i = 0; i < _bindings.Count; i++)
             {
                 _bindings[i].Apply();
             }
+
+            _paramFeatureExtractor.Update();
 
 #if UNITY_EDITOR
             if (!Application.isPlaying)

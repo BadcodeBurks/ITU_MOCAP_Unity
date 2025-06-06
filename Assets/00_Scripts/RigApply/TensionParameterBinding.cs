@@ -61,6 +61,9 @@ namespace Burk
 
         public override ControlType ControlType => ControlType.AnimationParam;
 
+        private float _value;
+        public float Value => _value;
+
         public void SetAnimator(ref Animator animator)
         {
             if (!animator.TryGetNameHash(parameterName, out _parameterHash)) return;
@@ -78,7 +81,8 @@ namespace Burk
 
             if (!useRaw) value = GetTemporalAverage(value);
             //value = _lutCurve.Evaluate(value);
-            _animator.SetFloat(_parameterHash, Mathf.Clamp01(value));
+            _value = Mathf.Clamp01(value);
+            _animator.SetFloat(_parameterHash, _value);
         }
         float movingAverage = 0f;
         private float GetTemporalAverage(float value)
