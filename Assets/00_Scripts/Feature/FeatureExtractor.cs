@@ -7,6 +7,7 @@ namespace Burk
     {
         List<ParameterControl> _controls;
         FeatureVector _featureVector;
+        public FeatureVector FeatureVector => _featureVector;
         public ParameterFeatureExtractor(List<ParameterControl> controls)
         {
             _controls = controls;
@@ -19,8 +20,6 @@ namespace Burk
             {
                 _featureVector[i] = _controls[i].Value;
             }
-
-            Debug.Log(_featureVector.ToString());
         }
     }
 }

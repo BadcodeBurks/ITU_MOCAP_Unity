@@ -743,7 +743,7 @@ MonoBehaviour:
     type: 3}
   m_PrefabInstance: {fileID: 494131570}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 494131571}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1e63519200a705942981189e330b946b, type: 3}
@@ -2545,7 +2545,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 186713106}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.2690745, y: 3e-45, z: -1e-45, w: 0.9631194}
+  m_LocalRotation: {x: 0.2690745, y: -1e-45, z: -0, w: 0.9631194}
   m_LocalPosition: {x: 0, y: 3, z: -3.3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -4856,7 +4856,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.2690745, y: 3e-45, z: -1e-45, w: 0.9631194}
+  m_LocalRotation: {x: 0.2690745, y: -1e-45, z: -0, w: 0.9631194}
   m_LocalPosition: {x: 0, y: 3, z: -3.3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -7329,8 +7329,33 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5592818879480276191, guid: bf01fdd44c5b8bc4d8f0903cec214ad9,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 494131572}
   m_SourcePrefab: {fileID: 100100000, guid: bf01fdd44c5b8bc4d8f0903cec214ad9, type: 3}
+--- !u!1 &494131571 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5592818879480276191, guid: bf01fdd44c5b8bc4d8f0903cec214ad9,
+    type: 3}
+  m_PrefabInstance: {fileID: 494131570}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &494131572
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 494131571}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e56cf28e7014bf48b24d63b21313996, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  containerToRecordAt: {fileID: 11400000, guid: d7a38e8594eda8841a4db5bbb6588334,
+    type: 2}
+  controlSetToRecord: {fileID: 38629970}
 --- !u!1 &495027065
 GameObject:
   m_ObjectHideFlags: 0
@@ -11521,7 +11546,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 857473018}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 0.7071069, z: 0, w: -0.70710677}
+  m_LocalRotation: {x: 0, y: 0.7071069, z: 0, w: -0.70710677}
   m_LocalPosition: {x: 2.025, y: 1.174, z: 0.306}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -12461,6 +12486,7 @@ MonoBehaviour:
   pipeBufferContainer: {fileID: 11400000, guid: 62208c06e3b083b44bd0283c23e722e9,
     type: 2}
   pipeBufferUIController: {fileID: 1193475871}
+  useSimulated: 1
 --- !u!4 &913501417
 Transform:
   m_ObjectHideFlags: 0

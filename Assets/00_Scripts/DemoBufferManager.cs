@@ -10,6 +10,7 @@ namespace Burk
         [SerializeField] SimulatedBufferContainer simulatedBufferContainer;
         [SerializeField] PipeBufferContainer pipeBufferContainer;
         [SerializeField] PipeBufferUIController pipeBufferUIController;
+        [SerializeField] bool useSimulated;
 
         private void Start()
         {
@@ -18,8 +19,15 @@ namespace Burk
             pipeBufferContainer.Init();
             simulatedBufferContainer.Init();
             controlSet.Init(null);
-            pipeBufferUIController.SetReconnectButtonActive(true);
-            pipeBufferUIController.OnReconnect += ReconnectPipeBuffer;
+            if (!useSimulated)
+            {
+                pipeBufferUIController.SetReconnectButtonActive(true);
+                pipeBufferUIController.OnReconnect += ReconnectPipeBuffer;
+            }
+            else
+            {
+                controlSet.BindControls(simulatedBufferContainer);
+            }
         }
 
         private void StartPipeBuffer()

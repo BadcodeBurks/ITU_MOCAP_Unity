@@ -36,6 +36,7 @@ namespace Burk
         public bool IsBound => _isBound;
         private bool _usesAnimator;
         ParameterFeatureExtractor _paramFeatureExtractor;
+        public ParameterFeatureExtractor ParamFeatureExtractor => _paramFeatureExtractor;
 
         public void Init(BufferContainer buffer)
         {

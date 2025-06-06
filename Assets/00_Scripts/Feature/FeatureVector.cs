@@ -25,6 +25,13 @@ namespace Burk
             _lengthDirtyFlag = true;
         }
 
+        public float[] GetFeatures()
+        {
+            float[] result = new float[_features.Length];
+            Array.Copy(_features, result, _features.Length);
+            return result;
+        }
+
         public void SetFeature(int index, float value)
         {
             if (index < 0 || index >= _features.Length) return;
