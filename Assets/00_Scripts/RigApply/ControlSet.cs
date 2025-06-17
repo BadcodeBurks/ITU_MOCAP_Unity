@@ -47,6 +47,8 @@ namespace Burk
         private void InitControls()
         {
             _bindings = new List<SensorBinding>();
+            _parameterControls = new List<ParameterControl>();
+            _transformControls = new List<TransformControl>();
 
             for (int i = 0; i < _controlList.Count; i++)
             {

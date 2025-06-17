@@ -24,6 +24,7 @@ namespace Burk
         [InitializeOnLoadMethod]
         private static void Init()
         {
+            return;
             _controlSets = new Dictionary<int, ControlSet>();
             ControlSet.OnControlSetValidated += OnControlSetValidated;
             EditorApplication.hierarchyChanged += OnHierarchyChange;
@@ -34,6 +35,7 @@ namespace Burk
 
         private static void OnPlayModeStateChanged(PlayModeStateChange state)
         {
+            return;
             if (state == PlayModeStateChange.ExitingPlayMode)
             {
                 foreach (KeyValuePair<int, ControlSet> controlSet in _controlSets)

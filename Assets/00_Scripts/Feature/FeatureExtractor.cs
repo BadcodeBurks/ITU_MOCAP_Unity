@@ -11,6 +11,7 @@ namespace Burk
         public ParameterFeatureExtractor(List<ParameterControl> controls)
         {
             _controls = controls;
+            //Debug.Log(controls.Count);
             _featureVector = new FeatureVector(controls.Count);
         }
 
