@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO.Pipes;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -55,6 +56,25 @@ namespace Burk
 #if UNITY_EDITOR
             if (!Application.isPlaying) CreateClient();
 #endif
+        }
+
+        public void ResetCalibration(float duration = 5f)
+        {
+            _routineMono.StartCoroutine(CalibrateRoutine(duration));
+        }
+
+        private IEnumerator CalibrateRoutine(float t)
+        {
+            TensionSensorReader[] tensionReaders = _tensionReaderCache.Values.ToArray();
+            for (int i = 0; i < _tensionReaderCache.Count; i++)
+            {
+                tensionReaders[i].ResetCalibration();
+            }
+            yield return new WaitForSeconds(t);
+            for (int i = 0; i < _tensionReaderCache.Count; i++)
+            {
+                tensionReaders[i].StopCalibration();
+            }
         }
 
         public void CreateClient()
@@ -138,6 +158,7 @@ namespace Burk
         {
             Debug.Log("Pipe Read Start: " + pipeClient.IsConnected);
             if (!pipeClient.IsConnected) yield break;
+            ResetCalibration();
             while (true)
             {
                 byte[] buffer = new byte[m_Buffer.Length * sizeof(float)];
@@ -145,7 +166,7 @@ namespace Burk
                 TaskAwaiter aw = Task.Run(() => { bytesRead = pipeClient.Read(buffer, 0, buffer.Length); }).GetAwaiter();
                 while (!aw.IsCompleted)
                 {
-                    Debug.Log("Waiting");
+                    //Debug.Log("Waiting");
                     if (pipeClient.NumberOfServerInstances == 0)
                     {
                         pipeClient.Close();
@@ -161,7 +182,7 @@ namespace Burk
                     continue;
                 }
                 Buffer.BlockCopy(buffer, 0, m_Buffer, 0, bytesRead);
-                Debug.Log("Read: " + bytesRead);
+                //Debug.Log("Read: " + bytesRead);
                 OnBufferWrite?.Invoke();
             }
             IEnumerator Wait()

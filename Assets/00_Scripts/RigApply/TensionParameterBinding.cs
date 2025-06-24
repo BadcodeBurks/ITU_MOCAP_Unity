@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Burk
 {
@@ -18,6 +19,11 @@ namespace Burk
         {
             //Debug.Log("binding " + _paramControl.Key + " to " + buffer.name);
             _reader = buffer.GetTensionReader(readerKey);
+            if (_reader == null)
+            {
+                Debug.LogError("No Reader With Key: " + readerKey);
+                return;
+            }
             _paramControl.Reset();
             _isBound = true;
             _value = 0;
@@ -54,7 +60,7 @@ namespace Burk
         }
         [SerializeField] private string parameterName;
         [SerializeField] private float inputDeadzone = 1.2f;
-        [SerializeField] private AnimationCurve _lutCurve = AnimationCurve.Linear(0, 0, 1, 1);
+        [SerializeField][FormerlySerializedAs("_lutCurve")] private AnimationCurve _mapCurve = AnimationCurve.Linear(0, 0, 1, 1);
         private int _parameterHash;
 
         private Animator _animator;
@@ -87,7 +93,7 @@ namespace Burk
         float movingAverage = 0f;
         private float GetTemporalAverage(float value)
         {
-            movingAverage = Mathf.Lerp(movingAverage, value, 0.2f);
+            movingAverage = Mathf.Lerp(movingAverage, value, 0.12f);
             return movingAverage;
         }
 

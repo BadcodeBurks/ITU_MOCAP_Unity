@@ -11,12 +11,14 @@ namespace Burk
         private BufferContainer.BufferReader _bufferReader;
         private Vector2 _valueRange;
         private const float inputDeadzone = 1f;
+        private bool _calibrate = false;
 
         public TensionSensorReader(BufferContainer.BufferReader reader, int bufferIndex, bool useRaw = false)
         {
             _bufferReader = reader;
             _bufferIndex = bufferIndex;
             _useRaw = useRaw;
+            ResetCalibration();
         }
 
         public float Read()
@@ -24,7 +26,7 @@ namespace Burk
             float value = _bufferReader.ReadFloat(_bufferIndex);
             if (_useRaw) return value;
             value = ApplyDeadzone(value);
-            ConfigureMapping(value);
+            if (_calibrate) ConfigureMapping(value);
             value = (value - _valueRange.x) / Mathf.Max(_valueRange.y - _valueRange.x, 1f);
             return value;
         }
@@ -40,6 +42,18 @@ namespace Burk
             {
                 _valueRange.y = value;
             }
+        }
+
+        public void ResetCalibration()
+        {
+            _calibrate = true;
+            _valueRange.x = float.MaxValue;
+            _valueRange.y = float.MinValue;
+        }
+
+        public void StopCalibration()
+        {
+            _calibrate = false;
         }
 
         float _latestInput = 0f;

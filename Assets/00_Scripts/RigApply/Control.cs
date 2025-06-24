@@ -6,7 +6,8 @@ namespace Burk
     public enum ControlType
     {
         Transform,
-        AnimationParam
+        AnimationParam,
+        UISliderValue
     }
     [Serializable]
     public class Control
@@ -15,7 +16,7 @@ namespace Burk
         public string Key => _key;
         [SerializeField] protected ControlType _controlType;
         protected Vector2 _valueRange;
-        [SerializeField] protected Vector2 mapRange;
+        [HideInInspector][SerializeField] protected Vector2 mapRange;
 
         protected bool _isCalibrating = false;
         public virtual ControlType ControlType => _controlType;

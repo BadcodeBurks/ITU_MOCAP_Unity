@@ -51,6 +51,8 @@ namespace Burk
                     return typeof(TransformControl);
                 case ControlType.AnimationParam:
                     return typeof(ParameterControl);
+                case ControlType.UISliderValue:
+                    return typeof(UISliderControl);
                 default:
                     return null;
             }
@@ -64,6 +66,8 @@ namespace Burk
                     return new TransformControl();
                 case ControlType.AnimationParam:
                     return new ParameterControl();
+                case ControlType.UISliderValue:
+                    return new UISliderControl();
                 default:
                     return null;
             }

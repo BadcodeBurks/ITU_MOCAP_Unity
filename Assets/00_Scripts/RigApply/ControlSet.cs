@@ -21,7 +21,7 @@ namespace Burk
             [SerializeReference] public Control value;
             [SerializeReference] public string key;
         }
-        [SerializeField][ConfigNamePopup] private string _configName;
+        //[SerializeField][ConfigNamePopup] private string _configName;
         [SerializeField] string _name = "ControlSet";
         public string Name => _name;
 

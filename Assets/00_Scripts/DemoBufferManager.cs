@@ -7,6 +7,7 @@ namespace Burk
         [SerializeField] SensorUIController sensorUIController;
         // [SerializeField] HandRigController rigController;
         [SerializeField] ControlSet controlSet;
+        [SerializeField] ControlSet uiControlSet;
         [SerializeField] SimulatedBufferContainer simulatedBufferContainer;
         [SerializeField] PipeBufferContainer pipeBufferContainer;
         [SerializeField] PipeBufferUIController pipeBufferUIController;
@@ -19,14 +20,18 @@ namespace Burk
             pipeBufferContainer.Init();
             simulatedBufferContainer.Init();
             controlSet.Init(null);
+            uiControlSet.Init(null);
             if (!useSimulated)
             {
                 pipeBufferUIController.SetReconnectButtonActive(true);
                 pipeBufferUIController.OnReconnect += ReconnectPipeBuffer;
+                pipeBufferUIController.OnCalibrate += CalibrateControls;
+                StartPipeBuffer();
             }
             else
             {
                 controlSet.BindControls(simulatedBufferContainer);
+                uiControlSet.BindControls(simulatedBufferContainer);
             }
         }
 
@@ -36,6 +41,7 @@ namespace Burk
             pipeBufferContainer.OnBufferInitialized += () =>
             {
                 controlSet.Init(pipeBufferContainer);
+                uiControlSet.Init(pipeBufferContainer);
             };
             pipeBufferContainer.CreateClient();
         }
@@ -49,13 +55,15 @@ namespace Burk
         {
             StopPipeBuffer();
             controlSet.UnbindControls();
+            uiControlSet.UnbindControls();
             StartPipeBuffer();
             controlSet.BindControls(pipeBufferContainer);
+            uiControlSet.BindControls(pipeBufferContainer);
         }
 
         public void CalibrateControls(float calibrationDuration)
         {
-            //Do something to reset calibration
+            pipeBufferContainer.ResetCalibration(calibrationDuration);
         }
     }
 }
